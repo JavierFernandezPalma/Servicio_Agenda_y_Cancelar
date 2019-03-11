@@ -1,0 +1,373 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="agendaModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="t_cancelacion_estado">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdFormulario" Type="int" />
+          <Property Name="NumConsecutivo" Type="varchar" MaxLength="100" />
+          <Property Name="FechaCancelacion" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="t_contador">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdFormulario" Type="int" Nullable="false" />
+          <Property Name="NumConsecutivoFromulario" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="CodigoFormulario" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="Sala" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="FechaRegistro" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="EstadoAgendamiento" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="t_formulario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TipoDeSolicitud" Type="varchar" MaxLength="50" />
+          <Property Name="HoraDeInicio" Type="varchar" MaxLength="50" />
+          <Property Name="DespachoSolicitante" Type="varchar" MaxLength="200" />
+          <Property Name="CiudaDeOrigen" Type="varchar" MaxLength="50" />
+          <Property Name="Sala" Type="varchar" MaxLength="20" />
+          <Property Name="TipoDeAudiencia" Type="varchar" MaxLength="5" />
+          <Property Name="NombreDeSolicitante" Type="varchar" MaxLength="100" />
+          <Property Name="CelularDeSolicitante" Type="varchar" MaxLength="100" />
+          <Property Name="NumeroDeProceso" Type="varchar" MaxLength="100" />
+          <Property Name="MedioDeRecepcion" Type="varchar" MaxLength="30" />
+          <Property Name="ClaseDeVideoconferencia" Type="varchar" MaxLength="30" />
+          <Property Name="TipoDeConferencia" Type="varchar" MaxLength="100" />
+          <Property Name="FechaDeRegistro" Type="varchar" MaxLength="50" />
+          <Property Name="Num_Consecutivo" Type="varchar" MaxLength="50" />
+          <Property Name="Estado" Type="varchar" MaxLength="50" />
+          <Property Name="FechaRealizacion" Type="varchar" MaxLength="50" />
+          <Property Name="FechaFinalizacion" Type="varchar" MaxLength="50" />
+          <Property Name="CiudadDestino" Type="varchar" MaxLength="500" />
+          <Property Name="ContactoDestino" Type="varchar" MaxLength="300" />
+          <Property Name="Codigo" Type="varchar" MaxLength="100" />
+          <Property Name="Usuario" Type="varchar" MaxLength="100" />
+          <Property Name="Descripcion" Type="varchar" MaxLength="500" />
+          <Property Name="fechafinal" Type="varchar" MaxLength="30" />
+          <Property Name="horafinal" Type="varchar" MaxLength="30" />
+          <Property Name="CorreoDeSolicitante" Type="varchar" MaxLength="2000" />
+          <Property Name="CorreoDestino" Type="varchar" MaxLength="1000" />
+          <Property Name="Observaciones" Type="varchar" MaxLength="2000" />
+          <Property Name="Procesado" Type="varchar" MaxLength="200" />
+          <Property Name="Declarante" Type="varchar" MaxLength="200" />
+          <Property Name="numero_oficio" Type="varchar" MaxLength="20" />
+          <Property Name="EstadoAgendamiento" Type="int" />
+          <Property Name="ActualizadoPor" Type="varchar" MaxLength="100" />
+          <Property Name="UsuarioCierre" Type="varchar" MaxLength="100" />
+          <Property Name="urlagendamiento" Type="varchar" MaxLength="1000" />
+          <Property Name="FechaCierre" Type="varchar" MaxLength="50" />
+          <Property Name="freal" Type="datetime" Precision="0" />
+          <Property Name="SedeAdicional" Type="varchar" MaxLength="500" />
+          <Property Name="FechaSolicitud" Type="datetime" Precision="0" />
+          <Property Name="FechaDeActualizacion" Type="datetime" Precision="0" />
+          <Property Name="EmailSolicitante" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="t_login_rp1cloud">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodigoSala" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="NombreSala" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Usuario_Rp1Cloud" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Clave" Type="varchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="agendaModelStoreContainer">
+          <EntitySet Name="t_cancelacion_estado" EntityType="Self.t_cancelacion_estado" Schema="agenda_desarrollo" store:Type="Tables" />
+          <EntitySet Name="t_contador" EntityType="Self.t_contador" Schema="agenda_desarrollo" store:Type="Tables" />
+          <EntitySet Name="t_formulario" EntityType="Self.t_formulario" Schema="agenda_desarrollo" store:Type="Tables" />
+          <EntitySet Name="t_login_rp1cloud" EntityType="Self.t_login_rp1cloud" Schema="agenda_desarrollo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="agendaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="agendaEntities" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="SP_REGISTRO_RP1CLUOD">
+            <Parameter Name="IdFormulario_" Mode="In" Type="Int32" />
+            <Parameter Name="NumConsecutivo_" Mode="In" Type="String" />
+            <Parameter Name="CodigoRegistro_" Mode="In" Type="String" />
+            <Parameter Name="FechaRegistro_" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_REGISTRO_CANCELACION">
+            <Parameter Name="IdFormulario_" Mode="In" Type="Int32" />
+            <Parameter Name="NumConsecutivo_" Mode="In" Type="String" />
+            <Parameter Name="FechaRegistro_" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_ACTUALIZAR_ESTADO">
+            <Parameter Name="Consecutivo_" Mode="In" Type="String" />
+            <Parameter Name="Estado_" Mode="In" Type="String" />
+            <Parameter Name="Descripcion_" Mode="In" Type="String" />
+            <Parameter Name="FechaFinal_" Mode="In" Type="String" />
+            <Parameter Name="HoraFinal_" Mode="In" Type="String" />
+            <Parameter Name="ActualizadoPor_" Mode="In" Type="String" />
+            <Parameter Name="urlagendamiento_" Mode="In" Type="String" />
+            <Parameter Name="FechaCierre_" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_CAMBIAR_CLAVE">
+            <Parameter Name="Id_" Mode="In" Type="Int32" />
+            <Parameter Name="ClaveNueva_" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_NUEVO_AGENDAMIENTO">
+            <Parameter Name="Codigo_" Mode="In" Type="String" />
+            <Parameter Name="Consecutivo_" Mode="In" Type="String" />
+            <Parameter Name="TipoSolicitud_" Mode="In" Type="String" />
+            <Parameter Name="FechaRealizacion_" Mode="In" Type="String" />
+            <Parameter Name="HoraInicio_" Mode="In" Type="String" />
+            <Parameter Name="NombreSolicitante_" Mode="In" Type="String" />
+            <Parameter Name="CorreoSolicitante_" Mode="In" Type="String" />
+            <Parameter Name="CelularSolicitante_" Mode="In" Type="String" />
+            <Parameter Name="ClaseVideoconferencia_" Mode="In" Type="String" />
+            <Parameter Name="TipoConferencia_" Mode="In" Type="String" />
+            <Parameter Name="DespachoSolicitante_" Mode="In" Type="String" />
+            <Parameter Name="CiudadOrigen_" Mode="In" Type="String" />
+            <Parameter Name="Sala_" Mode="In" Type="String" />
+            <Parameter Name="CiudadDestino_" Mode="In" Type="String" />
+            <Parameter Name="TipoAudiencia_" Mode="In" Type="String" />
+            <Parameter Name="ContactoDestino_" Mode="In" Type="String" />
+            <Parameter Name="CorreoDestino_" Mode="In" Type="String" />
+            <Parameter Name="NumeroProceso_" Mode="In" Type="String" />
+            <Parameter Name="MedioRecepcion_" Mode="In" Type="String" />
+            <Parameter Name="Estado_" Mode="In" Type="String" />
+            <Parameter Name="Usuario_" Mode="In" Type="String" />
+            <Parameter Name="Descripcion_" Mode="In" Type="String" />
+            <Parameter Name="FechaAgendamiento_" Mode="In" Type="String" />
+            <Parameter Name="FechaFinal_" Mode="In" Type="String" />
+            <Parameter Name="HoraFinal_" Mode="In" Type="String" />
+            <Parameter Name="Observaciones_" Mode="In" Type="String" />
+            <Parameter Name="Procesado_" Mode="In" Type="String" />
+            <Parameter Name="Declarante_" Mode="In" Type="String" />
+            <Parameter Name="numero_oficio_" Mode="In" Type="String" />
+            <Parameter Name="ActualizadoPor_" Mode="In" Type="String" />
+            <Parameter Name="FechaFinalizacion_" Mode="In" Type="String" />
+            <Parameter Name="EstadoAgendamiento_" Mode="In" Type="Int32" />
+            <Parameter Name="UsuarioCierre_" Mode="In" Type="String" />
+            <Parameter Name="urlagendamiento_" Mode="In" Type="String" />
+            <Parameter Name="FechaCierre_" Mode="In" Type="String" />
+            <Parameter Name="freal_" Mode="In" Type="DateTime" />
+          </FunctionImport>
+          <FunctionImport Name="SP_NUEVO_ESTADO">
+            <Parameter Name="Consecutivo_" Mode="In" Type="String" />
+            <Parameter Name="Estado_" Mode="In" Type="String" />
+            <Parameter Name="Descripcion_" Mode="In" Type="String" />
+            <Parameter Name="FechaDeActuaizacion_" Mode="In" Type="String" />
+            <Parameter Name="Usuario_" Mode="In" Type="String" />
+            <Parameter Name="FechaFinal_" Mode="In" Type="String" />
+            <Parameter Name="HoraFinal_" Mode="In" Type="String" />
+            <Parameter Name="IdFormulario_" Mode="In" Type="String" />
+            <Parameter Name="UrlAgendamiento_" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="SP_NUEVO_USUARIO">
+            <Parameter Name="Id_" Mode="In" Type="String" />
+            <Parameter Name="Clave_" Mode="In" Type="String" />
+            <Parameter Name="TipoUsuario_" Mode="In" Type="Int32" />
+            <Parameter Name="Nombres_" Mode="In" Type="String" />
+            <Parameter Name="Apellidos_" Mode="In" Type="String" />
+            <Parameter Name="Email_" Mode="In" Type="String" />
+            <Parameter Name="FechaRegistro_" Mode="In" Type="String" />
+            <Parameter Name="Cargo_" Mode="In" Type="String" />
+            <Parameter Name="Cedula_" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="t_cancelacion_estado" EntityType="agendaModel.t_cancelacion_estado" />
+          <EntitySet Name="t_formulario" EntityType="agendaModel.t_formulario" />
+          <EntitySet Name="t_login_rp1cloud" EntityType="agendaModel.t_login_rp1cloud" />
+          <EntitySet Name="t_contador" EntityType="agendaModel.t_contador" />
+        </EntityContainer>
+        <EntityType Name="t_cancelacion_estado">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdFormulario" Type="Int32" />
+          <Property Name="NumConsecutivo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCancelacion" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="t_formulario">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TipoDeSolicitud" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="HoraDeInicio" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DespachoSolicitante" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="CiudaDeOrigen" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Sala" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="TipoDeAudiencia" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="NombreDeSolicitante" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CelularDeSolicitante" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="NumeroDeProceso" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="MedioDeRecepcion" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="ClaseDeVideoconferencia" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="TipoDeConferencia" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FechaDeRegistro" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Num_Consecutivo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaRealizacion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FechaFinalizacion" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CiudadDestino" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ContactoDestino" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Name="Codigo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Usuario" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="fechafinal" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="horafinal" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="CorreoDeSolicitante" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="CorreoDestino" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Observaciones" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="Procesado" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Declarante" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="numero_oficio" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="EstadoAgendamiento" Type="Int32" />
+          <Property Name="ActualizadoPor" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="UsuarioCierre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="urlagendamiento" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="FechaCierre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="freal" Type="DateTime" />
+          <Property Name="SedeAdicional" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="FechaSolicitud" Type="DateTime" />
+          <Property Name="FechaDeActualizacion" Type="DateTime" />
+          <Property Name="EmailSolicitante" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="t_login_rp1cloud">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodigoSala" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="NombreSala" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Usuario_Rp1Cloud" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Clave" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="t_contador">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdFormulario" Type="Int32" Nullable="false" />
+          <Property Name="NumConsecutivoFromulario" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CodigoFormulario" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Sala" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="FechaRegistro" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EstadoAgendamiento" Type="Int32" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="agendaModelStoreContainer" CdmEntityContainer="agendaEntities">
+          <EntitySetMapping Name="t_cancelacion_estado">
+            <EntityTypeMapping TypeName="agendaModel.t_cancelacion_estado">
+              <MappingFragment StoreEntitySet="t_cancelacion_estado">
+                <ScalarProperty Name="FechaCancelacion" ColumnName="FechaCancelacion" />
+                <ScalarProperty Name="NumConsecutivo" ColumnName="NumConsecutivo" />
+                <ScalarProperty Name="IdFormulario" ColumnName="IdFormulario" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="t_formulario">
+            <EntityTypeMapping TypeName="agendaModel.t_formulario">
+              <MappingFragment StoreEntitySet="t_formulario">
+                <ScalarProperty Name="EmailSolicitante" ColumnName="EmailSolicitante" />
+                <ScalarProperty Name="FechaDeActualizacion" ColumnName="FechaDeActualizacion" />
+                <ScalarProperty Name="FechaSolicitud" ColumnName="FechaSolicitud" />
+                <ScalarProperty Name="SedeAdicional" ColumnName="SedeAdicional" />
+                <ScalarProperty Name="freal" ColumnName="freal" />
+                <ScalarProperty Name="FechaCierre" ColumnName="FechaCierre" />
+                <ScalarProperty Name="urlagendamiento" ColumnName="urlagendamiento" />
+                <ScalarProperty Name="UsuarioCierre" ColumnName="UsuarioCierre" />
+                <ScalarProperty Name="ActualizadoPor" ColumnName="ActualizadoPor" />
+                <ScalarProperty Name="EstadoAgendamiento" ColumnName="EstadoAgendamiento" />
+                <ScalarProperty Name="numero_oficio" ColumnName="numero_oficio" />
+                <ScalarProperty Name="Declarante" ColumnName="Declarante" />
+                <ScalarProperty Name="Procesado" ColumnName="Procesado" />
+                <ScalarProperty Name="Observaciones" ColumnName="Observaciones" />
+                <ScalarProperty Name="CorreoDestino" ColumnName="CorreoDestino" />
+                <ScalarProperty Name="CorreoDeSolicitante" ColumnName="CorreoDeSolicitante" />
+                <ScalarProperty Name="horafinal" ColumnName="horafinal" />
+                <ScalarProperty Name="fechafinal" ColumnName="fechafinal" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Usuario" ColumnName="Usuario" />
+                <ScalarProperty Name="Codigo" ColumnName="Codigo" />
+                <ScalarProperty Name="ContactoDestino" ColumnName="ContactoDestino" />
+                <ScalarProperty Name="CiudadDestino" ColumnName="CiudadDestino" />
+                <ScalarProperty Name="FechaFinalizacion" ColumnName="FechaFinalizacion" />
+                <ScalarProperty Name="FechaRealizacion" ColumnName="FechaRealizacion" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="Num_Consecutivo" ColumnName="Num_Consecutivo" />
+                <ScalarProperty Name="FechaDeRegistro" ColumnName="FechaDeRegistro" />
+                <ScalarProperty Name="TipoDeConferencia" ColumnName="TipoDeConferencia" />
+                <ScalarProperty Name="ClaseDeVideoconferencia" ColumnName="ClaseDeVideoconferencia" />
+                <ScalarProperty Name="MedioDeRecepcion" ColumnName="MedioDeRecepcion" />
+                <ScalarProperty Name="NumeroDeProceso" ColumnName="NumeroDeProceso" />
+                <ScalarProperty Name="CelularDeSolicitante" ColumnName="CelularDeSolicitante" />
+                <ScalarProperty Name="NombreDeSolicitante" ColumnName="NombreDeSolicitante" />
+                <ScalarProperty Name="TipoDeAudiencia" ColumnName="TipoDeAudiencia" />
+                <ScalarProperty Name="Sala" ColumnName="Sala" />
+                <ScalarProperty Name="CiudaDeOrigen" ColumnName="CiudaDeOrigen" />
+                <ScalarProperty Name="DespachoSolicitante" ColumnName="DespachoSolicitante" />
+                <ScalarProperty Name="HoraDeInicio" ColumnName="HoraDeInicio" />
+                <ScalarProperty Name="TipoDeSolicitud" ColumnName="TipoDeSolicitud" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="t_login_rp1cloud">
+            <EntityTypeMapping TypeName="agendaModel.t_login_rp1cloud">
+              <MappingFragment StoreEntitySet="t_login_rp1cloud">
+                <ScalarProperty Name="Clave" ColumnName="Clave" />
+                <ScalarProperty Name="Usuario_Rp1Cloud" ColumnName="Usuario_Rp1Cloud" />
+                <ScalarProperty Name="NombreSala" ColumnName="NombreSala" />
+                <ScalarProperty Name="CodigoSala" ColumnName="CodigoSala" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="t_contador">
+            <EntityTypeMapping TypeName="agendaModel.t_contador">
+              <MappingFragment StoreEntitySet="t_contador">
+                <ScalarProperty Name="EstadoAgendamiento" ColumnName="EstadoAgendamiento" />
+                <ScalarProperty Name="FechaRegistro" ColumnName="FechaRegistro" />
+                <ScalarProperty Name="Sala" ColumnName="Sala" />
+                <ScalarProperty Name="CodigoFormulario" ColumnName="CodigoFormulario" />
+                <ScalarProperty Name="NumConsecutivoFromulario" ColumnName="NumConsecutivoFromulario" />
+                <ScalarProperty Name="IdFormulario" ColumnName="IdFormulario" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

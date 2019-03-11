@@ -1,0 +1,420 @@
+﻿@using MODELO;
+
+@model Tuple<MODELO.t_despacho, MODELO.t_salas>
+
+@{
+    ViewBag.Title = "Agenda";
+    var mensaje = ViewBag.Mensaje;
+    var consecu = ViewBag.Consecutivo;
+    var tipo = Session["tipousuario"].ToString();
+}
+
+
+@if (ViewBag.Mensaje == null)
+{
+    <input type="hidden" id="txtOculto" value="" />
+}
+else
+{
+    <input type="hidden" id="txtOculto" value="@mensaje" />
+    <input type="hidden" id="txtConsecutivo" value="@consecu" />
+}
+
+<link rel="stylesheet" href="~/Content/stylos.css" />
+
+
+
+@{
+    var tipsol = (List<MODELO.t_tipo_solicitud>)ViewData["TipoSolicitud"];
+    var despsol = (List<MODELO.t_despacho_solicitante>)ViewData["DespachoSolicitante"];
+    var ciud = (List<MODELO.t_ciudad>)ViewData["ciudad"];
+    var medrecep = (List<MODELO.t_medio_recepcion>)ViewData["mediorecepcion"];
+    var clasconferenc = (List<MODELO.t_clase_videoconferencia>)ViewData["claseconferencia"];
+    var tipconferencia = (List<MODELO.t_tipo_conferencia>)ViewData["tipoconferencia"];
+    var sedeentidad = (List<MODELO.t_entidad_especialidad>)ViewData["sede_entidad"];
+    var despach = (List<MODELO.t_despacho>)ViewData["despacho"];
+    var tipaudi = (List<MODELO.t_tipo_audiencia>)ViewData["tipoaudiencia"];
+    var espe = (List<MODELO.t_entidad_especialidad>)ViewData["sede_enti"];
+    var dominios = (List<MODELO.t_dominios>)ViewData["dominio"];
+    var sala = (List<MODELO.t_salas>)ViewData["salas"];
+}
+
+
+<div class="container center section" id="idprogresbar" style="margin-top:200px;margin-bottom:400px;">
+    <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="hide" id="idpaginaagenda">
+
+    <div class="row" style="margin-top:20px;">
+        <div class="col s12">
+            <div class="row card-panel z-depth-4">
+                @*<div class="col s4">
+                        <img src="~/Content/img/consejo superior.png" class="responsive-img" style="height:75px; width:150px;" />
+                    </div>*@
+                <div class="col s12 center">
+                    <h4>AGENDA DE AUDIENCIAS</h4>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top:20px;">
+        <div class="col s12">
+            @using (Html.BeginForm())
+            {
+                <div class="card-panel z-depth-5">
+
+                    <!--Inicio de fila de TIPO DE SOLICITUD y FECHA DE REALIZACION-->
+                    <div class="row section" style="margin-bottom:5px;">
+                        <div class="input-field col s12 m6" style="padding-bottom:40px;">                                                     
+                            <i class="material-icons prefix">playlist_add_check</i>
+                            <label for="idtiposolicitud">                                
+                                <select class="js-example-basic-single js-states form-control" id="idtiposolicitud" name="tiposolicitud"  style="width: 95%;" required>
+                                    <option value="" disabled selected>SELECCIONE EL TIPO DE SOLICITUD</option>
+                                    @foreach (var item in tipsol)
+                                    {
+                                        <option value='@item.TipoDeSolicitud'>@item.TipoDeSolicitud</option>
+                                    }
+                                </select>
+                            </label>
+                        </div>
+                        <div class="input-field col s12 m6 row">
+                            <i class="material-icons prefix">timer</i>
+                            <input type="text" name="fecharealizacion" id="fecharealizacion" class="datepicker" placeholder="FECHA DE REALIZACIÓN" required>
+                            @*<div class="col s9">
+                                <i class="material-icons prefix">timer</i>
+                                <input type="text" name="fecharealizacion" id="fecharealizacion" class="datepicker" placeholder="FECHA DE REALIZACIÓN" required>
+                            </div>*@
+                            @*<div class="col s3">*@
+                                <!-- Modal Trigger  -->
+                                @*<a class="waves-effect waves-light btn modal-trigger red darken-4" href="#modal1"><i class="material-icons">add</i></a>
+                            </div>*@
+
+                        </div>
+                    </div>
+                    <!--Fin de fila de TIPO DE SOLICITUD y FECHA DE REALIZACION-->
+
+                    <!--Inicio de Modal 1-->
+                    <div id="modal1" class="modal" style="height:60%;">
+                        <div class="modal-content">
+                            <div style="margin-bottom:40px; text-align:center;">
+                                <h4>RANGO DE FECHAS</h4>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s6">
+                                    <i class="material-icons prefix">timer</i>
+                                    <input type="text" name="rangoiniciofecha" id="rangoiniciofecha" class="datepicker" placeholder="FECHA DE INICIO DESDE">
+                                </div>
+                                <div class="input-field col s6">
+                                    <i class="material-icons prefix">timer</i>
+                                    <input type="text" name="rangofinfecha" id="rangofinfecha" class="datepicker" placeholder="FECHA DE INICIO HASTA">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Fin de Modal 1-->
+
+                    <!--Inicio de fila de HORA DE INICIO y NOMBRE DEL SOLICITANTE-->
+                    <div class="row section" style="margin-bottom:5px;">
+                        <div class="input-field col s12 m6" style="padding-bottom:10px;">
+                            <i class="material-icons prefix">hourglass_full</i>
+                            <input type="text" name="horainicio" class="timepicker" id="horainicio" placeholder="HORA DE INICIO" required>
+                        </div>
+                        <div class="input-field col s12 m6">
+                            <i class="material-icons prefix">recent_actors</i>
+                            <input id="nomsoli" name="nombresolicitante" type="text" maxlength="50" class="validate" required>
+                            <label for="nomsoli">NOMBRE DEL SOLICITANTE</label>
+                        </div>
+                    </div>
+                    <!--Fin de fila de HORA DE INICIO y NOMBRE DEL SOLICITANTE-->
+
+                    <!--Inicio de CORREO SOLICITANTE-->
+                    <div class="row">
+                        <div class="input-field col s12 row">
+                            <div class="input-field col s12 m6" style="padding-bottom:10px;">
+                                <i class="material-icons prefix">email</i>
+                                <input id="emailsoli" name="usuarioemail" type="text" maxlength="50" class="validate" required>
+                                <label for="emailsoli">USUARIO</label>
+                            </div>
+                            <div class="input-field col s12 m6">                                
+                                <i class="material-icons prefix">playlist_add_check</i>
+                                <label for="iddominio">
+                                    <select class="js-example-basic-single js-states form-control" id="iddominio" name="dominio" style="width: 95%" required>
+                                        <option value="" disabled selected>SELECCIONE EL DOMINIO</option>
+                                        @foreach (var item in dominios)
+                                        {
+                                            <option value='@item.Dominios'>@item.Dominios</option>
+                                        }
+                                    </select>
+                                </label>
+                            </div>
+                        </div>                       
+                    </div>
+                    <!--Fin de CORREO SOLICITANTE-->
+
+                    <!--Inicio de CORREO OPCIONAL-->
+                    <div class="row">
+                        <div class="col s11" id="InputsWrapper">
+                            <div>
+                                <a href="#" class="removeclass"></a>
+                            </div>
+                        </div>
+                        <div class="col s1" id="AddMoreFileId">
+                            <a id="AddMoreFileBox" title="ADICIONAR CORREOS" class="btn-floating btn-small waves-effect waves-light red darken-4"><i class="material-icons">email</i></a>
+                        </div>
+                    </div>
+                    <!--Fin de CORREO OPCIONAL-->
+
+
+                    <!--Inicio de fila de CELULAR DEL SOLICITANTE-->
+                    <div class="row" style="margin-bottom:5px;">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">settings_phone</i>
+                            <input id="celsolic" name="celularsolicitante" type="text" data-length="10" maxlength="10" class="validate" onkeypress="return valida(event)" required>
+                            <label for="celsolic">CELULAR DEL SOLICITANTE</label>
+                        </div>
+                    </div>  
+                    <!--Fin de fila de CELULAR DEL SOLICITANTE-->
+
+                    <!--Inicio de fila de CLASE DE VIDEOCONFERENCIA y TIPO DE CONFERENCIA-->
+                    <div class="row section" style="margin-bottom:80px;">
+                        <div class="input-field col s12 m6">
+                            <i class="material-icons prefix">playlist_add_check</i>
+                            <label for="idclasevideoconferencia">
+                                <select class="js-example-basic-single js-states form-control" id="idclasevideoconferencia" name="clasevideoconferencia" style="width: 95%" required>
+                                    <option value="" disabled selected>SELECCIONE LA CLASE DE VIDEOCONFERENCIA</option>
+                                    @foreach (var item in clasconferenc)
+                                    {
+                                        <option value='@item.Id'>@item.ClaseDeVideoConferencia</option>
+                                    }
+                                </select>
+                            </label>
+                        </div>
+                        <div class="input-field col s12 m6">
+                            <i class="material-icons prefix">playlist_add_check</i>
+                            <label for="idtipoconferencia">
+                                TIPO DE CONFERENCIA
+                                <select class="js-example-basic-multiple js-states form-control" id="idtipoconferencia" name="tipoconferencia" multiple="multiple" style="width: 93%" required>
+                                    @foreach (var item in tipconferencia)
+                                    {
+                                        <option value='@item.Id'>@item.TipoConferencia</option>
+                                    }
+                                </select>
+                            </label>
+
+                        </div>
+                    </div>
+                    <!--Fin de fila de CLASE DE VIDEOCONFERENCIA y TIPO DE CONFERENCIA-->
+
+                    <!--Inicio de fila de DESPACHO SOLICITANTE-->
+                    <div class="row section">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">playlist_add_check</i>                            
+                            @if (ViewBag.ListaDespachos != null)
+                            {
+                                <label for="iddespachosolicitante">
+                                    @Html.DropDownListFor(tuple => tuple.Item1.CODIGO_DESPACHO, ViewBag.ListaDespachos as SelectList, "SELECCIONE EL DESPACHO SOLICITANTE", new { @class = "js-example-basic-single js-states form-control drop", style = "width:97%;", @id = "iddespachosolicitante", @Name = "despachosolicitante", required = "required" })
+                                </label>
+                            }
+                        </div>
+                    </div>
+                    <!--Fin de fila de DESPACHO SOLICITANTE-->
+
+                    <!--Inicio de fila de CIUDAD ORIGEN y SALA-->
+                    <div class="row section">
+                        <div class="input-field col s12">                            
+                            <i class="material-icons prefix">playlist_add_check</i>
+                            <label for="idciudaddeorigen">                                                         
+                                @Html.DropDownListFor(tuple => tuple.Item1.MUNICIPIO, new SelectList(""), "SELECCIONE LA CIUDAD ORIGEN", new { @class = "js-example-basic-single js-states form-control drop", style = "width:97%;", @id = "idciudaddeorigen", @Name = "ciudadorigen", @required = "required" })                               
+                            </label>
+                        </div>
+                    </div>
+                    <!--Fin de fila de CIUDAD ORIGEN y SALA-->
+
+                    <!--Inicio de fila de SALA-->
+                    <div class="row section">
+                        <div class="input-field col s12">                           
+                            <i class="material-icons prefix">playlist_add_check</i>
+                            <label for="idsala">                                                                                           
+                                @Html.DropDownListFor(tuple => tuple.Item2.NombreCompletoSalaVirtual, new SelectList(""), "SELECCIONE LA SALA", new { @class = "js-example-basic-single js-states form-control drop", style = "width:97%;", @id = "idsala", @Name = "codigosala" })
+                            </label>
+
+                        </div>
+                    </div>
+                    <!--Fin de fila de SALA-->
+
+                    <!--Inicio de fila de CIUDAD DESTINO y TIPO DE AUDIENCIA-->
+                    <div class="row section" style="margin-bottom:40px;">
+                        <div class="input-field col s12 m6" style="padding-bottom:80px;">
+                            <i class="material-icons prefix">playlist_add_check</i>                            
+                            <label for="idciudaddestino">
+                                CIUDAD DESTINO
+                                <select class="js-example-basic-multiple js-states form-control" id="idciudaddestino" name="ciudaddestino" multiple="multiple" style="width: 93%" required>
+                                    @foreach (var item in sala)
+                                    {
+                                        <option value='@item.CodigoDepartamento@item.CodigoMunicipio'>@item.Municipio - @item.Departamento</option>
+                                    }
+                                </select>
+                            </label>
+                        </div>
+                        <div class="input-field col s12 m6">                            
+                            <i class="material-icons prefix">playlist_add_check</i>
+                            <label for="idtipoaudiencia">                                
+                                <select class="js-example-basic-single js-states form-control" id="idtipoaudiencia" name="tipoaudiencia" style="width: 95%;" required>
+                                    <option value="" disabled selected>SELECCIONE EL TIPO DE AUDIENCIA</option>
+                                    @foreach (var item in tipaudi)
+                                    {
+                                        <option value='@item.Abreviatura'>@item.TipoAudiencia</option>
+                                    }
+                                </select>
+                            </label>
+
+                        </div>
+                    </div>
+                    <!--Fin de fila de CIUDAD DESTINO y TIPO DE AUDIENCIA-->
+
+                    <!--Inicio de fila de NUMERO DE PROCESO y MEDIO DE RECEPCION-->
+                    <div class="row section">
+                        <div class="input-field col s12 m6">
+                            <i class="material-icons prefix">confirmation_number</i>
+                            <input type="text" id="numproceso" name="numeroproceso" data-length="23" class="autocomplete validate" onkeypress="return valida(event)" maxlength="23" required>
+                            <label for="numproceso">NUMERO DE PROCESO</label>
+                        </div>
+                        <div class="input-field col s12 m6">                            
+                            <i class="material-icons prefix">playlist_add_check</i>
+                            <label for="idmediorecepcion">                                
+                                <select class="js-example-basic-single js-states form-control" id="idmediorecepcion" name="mediorecepcion" style="width: 95%;" required>
+                                    <option value="" disabled selected>SELECCIONE EL MEDIO DE RECEPCION</option>
+                                    @foreach (var item in medrecep)
+                                    {
+                                        <option value='@item.MedioDeRecepcion'>@item.MedioDeRecepcion</option>
+                                    }
+                                </select>
+                            </label>
+
+                        </div>
+                    </div>
+                    <!--Fin de fila de NUMERO DE PROCESO y MEDIO DE RECEPCION-->   
+
+                    
+
+                </div>
+
+            <!--Inicio de fila de botones GUARDAR y DESCARGAR-->
+                <div class="card-panel z-depth-5">
+                    <div class="row">
+                        <div class="col s12 m6 center" style="margin-bottom:20px;">
+                            <button class="btn-large waves-effect waves-light z-depth-5" id="idguardardatos" type="submit" name="btnGuardar">
+                                GUARDAR
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>
+                        <div class="col s12 m6 center">
+                            @if (tipo == "1")
+                            {
+                                <a href='@Url.Action("DescargarLista","Agenda")' class="waves-effect waves-light btn-large z-depth-5"><i class="material-icons right">cloud_download</i>DESCARGAR</a>
+                            }
+                            else
+                            {
+                                <a href='@Url.Action("DescargarLista","Agenda")' class="waves-effect waves-light btn-large z-depth-5 hide"><i class="material-icons right">cloud_download</i>DESCARGAR</a>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            <!--Fin de fila de botones GUARDAR y DESCARGAR-->
+            }
+        </div>
+    </div>   
+</div>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script>
+    window.addEventListener('load', () => {
+        document.getElementById('idprogresbar').className = 'hide';
+        document.getElementById('idpaginaagenda').className = '';
+    });
+</script>
+
+<script>    
+    $(document).ready(function () {
+
+        //Inicio de contador de caracteres
+        $('input#celsolic, input#numproceso').characterCounter();
+
+        $('js-example-basic-single.js-states.form-control.drop').formSelect();
+
+        $("#iddespachosolicitante").change(function () {
+            $.get("/Agenda/EscogerCiudad", { codigodespa: $("#iddespachosolicitante").val() }, function (data) {
+                $("#idciudaddeorigen").empty();
+                $.each(data, function (index, row) {
+                    $("#idciudaddeorigen").append("<option value='" + row.CODIGO_DESPACHO + "'>" + row.MUNICIPIO + "</option>");
+                });
+            });
+        });
+
+        $("#idciudaddeorigen").click(function () {
+            $.get("/Agenda/EscogerSala", { codigodespa: $("#idciudaddeorigen").val() }, function (data) {
+                $("#idsala").empty();
+                $.each(data, function (index, row) {
+                    $("#idsala").append("<option value='" + row.CodigoSala + "'>" + row.NombreCompletoSalaVirtual + "</option>");
+                });
+            });
+        });
+
+
+
+        //Inicio de logica correos opcionales
+
+        var MaxInputs = 4; //Maximo de input
+        var InputsWrapper = $("#InputsWrapper");
+        var AddButton = $("#AddMoreFileBox");
+
+        var x = InputsWrapper.length;
+        var FieldCount = 1;
+
+        $(AddButton).click(function (e) {
+            if (x <= MaxInputs) {
+                FieldCount++;
+                $(InputsWrapper).append('<div class="input-field col s12"><i class="material-icons prefix">email</i><input class="validate" placeholder="E-MAIL ADICIONAL ' + x + '" type="email" name="correosadicionales[]" id="field_' + FieldCount + '"/> <a id="AddMoreFileBox" style="margin-top:10px;margin-bottom:10px;" class="removeclass btn-floating btn-small waves-effect waves-light red"><i class="material-icons">clear</i></a></div>');
+                x++;
+                $("#AddMoreFileId").show();
+                $('AddMoreFileBox').html("Add field");
+                if (x == 5) {
+                    $("#AddMoreFileId").hide();
+                    $("#lineBreak").html("<br>");
+                }
+            }
+            return false;
+        });
+
+        $("body").on("click", ".removeclass", function (e) {
+            if (x > 1) {
+                $(this).parent('div').remove();
+                x--;
+                $("#AddMoreFileId").show();
+                $("#lineBreak").html("");
+                $('AddMoreFileBox').html("Add field");
+            }
+            return false;
+        })
+
+        //Fin de logica de correos opcionales
+
+
+
+
+    });    
+
+</script>

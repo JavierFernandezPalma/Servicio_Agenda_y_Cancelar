@@ -1,0 +1,159 @@
+﻿using MODELO;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace SERVICIO
+{
+    public class ClaseCancelarAgenda
+    {
+        DateTime HoyAhora = DateTime.Now; // Extrae la facha y hora actual
+        agendaEntities bd_agenda = new agendaEntities();
+        LogErrores log = new LogErrores();
+        FirefoxDriverService service = FirefoxDriverService.CreateDefaultService(ConfigurationManager.AppSettings["rutadriver"]);
+
+        public bool ServicioCancelar(t_formulario registro_, string codigo_, t_login_rp1cloud credenciales_)
+        {
+
+            service.FirefoxBinaryPath = ConfigurationManager.AppSettings["rutanavegador"];
+            IWebDriver driver_ = new FirefoxDriver(service);
+
+            try
+            {
+                int a = IniciarNavegador(driver_, credenciales_.Usuario_Rp1Cloud, credenciales_.Clave);
+                int b = SeleccionarCalendario(driver_);
+                int c = EliminarAgendamiento(driver_, registro_, codigo_);
+                Cerrar(driver_);
+
+                if (a + b + c > 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Cerrar(driver_);
+                log.EscribaLog("ERROR : Seleccionar Dia", "el error es : " + ex.ToString());
+                return true;
+            }
+
+        }
+
+
+        private int IniciarNavegador(IWebDriver driver, string usuario, string clave)
+        {
+
+            try
+            {
+
+                //Inicio Iniciar navegador
+                driver.Navigate().GoToUrl("http://my.rp1cloud.com/");
+                driver.FindElement(By.Name("accountLogin")).SendKeys(usuario);
+                driver.FindElement(By.Name("accountPassword")).SendKeys(clave);
+                //driver.FindElement(By.Name("accountLogin")).SendKeys("david.mendez@axede.com.co");
+                //driver.FindElement(By.Name("accountPassword")).SendKeys("123456");
+                driver.FindElement(By.ClassName("submit")).Click();
+                driver.Manage().Window.Maximize(); //Maximixar ventana del navegador
+
+                return 0;
+                //Fin Iniciar navegador
+            }
+            catch (Exception ex)
+            {
+                log.EscribaLog("IniciarNavegador_Error", "El error es : " + ex.ToString());
+                return 1;
+            }
+
+        }
+
+
+        public int SeleccionarCalendario(IWebDriver driver)
+        {
+
+            try
+            {
+                //Seleccionar calendario
+                driver.Navigate().GoToUrl("https://my.rp1cloud.com/meetings/schedule");
+
+                return 0;
+                //Seleccionar calendario
+            }
+            catch (Exception e)
+            {
+                log.EscribaLog("SeleccionarCalendario_Error", " El error es : " + e.ToString());
+                return 1;
+            }
+        }
+
+        public int EliminarAgendamiento(IWebDriver driver, t_formulario registroFormulario, string codigo)
+        {
+            try
+            {
+                //Eliminar Agendamiento
+
+                Thread.Sleep(2000);
+                IWebElement webElement = driver.FindElement(By.CssSelector("body"));
+
+                webElement.SendKeys("/");
+                //webElement.SendKeys(registroEliminar[i]); // Para hacer pruebas
+                webElement.SendKeys((codigo).ToString());
+                webElement.SendKeys(Keys.Enter);
+
+                driver.FindElement(By.XPath("/html/body/div/section[2]/ng-include/div[1]/div/div[2]/ng-include/div[1]/div[1]/div[3]/div/button[2]")).Click();
+
+                Thread.Sleep(1000);
+                IWebElement webElement1 = driver.FindElement(By.ClassName("confirm"));
+                //IWebElement webElement1 = driver.FindElement(By.ClassName("cancel"));  // Para hacer pruebas
+
+                webElement1.Click();
+
+                t_cancelacion_estado obj = new t_cancelacion_estado()
+                {
+                    IdContador = registroFormulario.Id,
+                    NumConsecutivo = registroFormulario.Num_Consecutivo,
+                    FechaCancelacion = HoyAhora.ToString()
+                };
+
+                bd_agenda.t_cancelacion_estado.Add(obj);
+                bd_agenda.SaveChanges();
+
+                return 0;
+
+                //tablaFormulario.SP_REGISTRO_CANCELACION(registroEliminar[i].Id, registroEliminar[i].Num_Consecutivo, HoyAhora.ToString());
+                //Fin Eliminar Agendamiento
+
+            }
+            catch (Exception e)
+            {
+                log.EscribaLog("EliminarAgendamiento_Error", " El error es : " + e.ToString());
+                return 1;
+            }
+        }
+
+        public void Cerrar(IWebDriver driver)
+        {
+            try
+            {
+                driver.Close();
+                driver.Quit();
+
+            }
+            catch (Exception ex)
+            {
+                log.EscribaLog("CerrarOcultar_Error", " El error es : " + ex.ToString());
+            }
+
+        }
+
+    }
+}

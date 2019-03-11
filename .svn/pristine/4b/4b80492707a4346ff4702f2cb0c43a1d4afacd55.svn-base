@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Agenda</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+    @Styles.Render("~/Content/Toastrcss")
+    @Styles.Render("~/Content/materializecss")
+    <link rel="stylesheet" href="~/Content/Select2/css/select2.min.css"/>
+</head>
+<body>
+   
+    <div class="navbar-fixed">
+
+        <!-- Dropdown Structure -->
+        <ul id="dropdown1" class="dropdown-content">
+            <li><a href='@Url.Action("Agenda","Agenda")'>SOLICITUD DE AGENDAMIENTO</a></li>
+            <li><a href='@Url.Action("EstadoAgendamiento","EstadoAgendamiento")'>ACTUALIZACIÓN DE ESTADO</a></li>
+            <li><a href='@Url.Action("CambioDeClave","Acceso")'>CAMBIO DE CONTRASEÑA</a></li>
+            <li><a href='@Url.Action("Login","Acceso")'>SALIR</a></li>
+        </ul>
+
+        <!-- Dropdown Structure -->
+        <ul id="dropdown2" class="dropdown-content">
+            <li><a href='@Url.Action("Agenda","Agenda")'>SOLICITUD DE AGENDAMIENTO</a></li>
+            <li><a href='@Url.Action("EstadoAgendamiento","EstadoAgendamiento")'>ACTUALIZACIÓN DE ESTADO</a></li>
+            <li><a href='@Url.Action("CambioDeClave","Acceso")'>CAMBIO DE CONTRASEÑA</a></li>
+            <li><a href='@Url.Action("Login","Acceso")'>SALIR</a></li>
+        </ul>
+
+        <nav class="red darken-4">
+            <div class="container nav-wrapper">
+                <a href="#" class="brand-logo">AGENDA DE AUDIENCIAS</a>
+                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    @*<li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><i class="material-icons">view_agenda</i></a></li>*@
+                    <li><a class="dropdown-trigger" href="#!" data-target="dropdown1">AGENDAMIENTO<i class="material-icons right">arrow_drop_down</i></a></li>
+                </ul>
+            </div>
+        </nav>        
+    </div>
+
+    <ul class="sidenav" id="mobile-demo">
+        <li><a class="dropdown-trigger" href="#!" data-target="dropdown2">AGENDA<i class="material-icons right">arrow_drop_down</i></a></li>
+    </ul>
+
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    <footer class="page-footer red darken-4">        
+        <div class="footer-copyright">
+            <div class="container">
+                © 2018 Copyright - Desarrolado por Axede S.A
+                <a class="grey-text text-lighten-4 right" href="#!">Axede S.A</a>
+            </div>
+        </div>
+    </footer>
+
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/materializejs")
+    <script src="~/Scripts/Select2/js/select2.min.js"></script>
+    @Scripts.Render("~/bundles/ToastrJs")
+    @RenderSection("scripts", required: false)
+    @RenderSection("scripts", required: false)
+</body>
+</html>

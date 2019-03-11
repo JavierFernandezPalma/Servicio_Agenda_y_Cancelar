@@ -1,0 +1,211 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using MODELO;
+
+namespace WEB.Models
+{
+    public class Metodos
+    {
+        agendaEntities ae = new agendaEntities();
+        public int AccesoAgenda(string usuario, string clave)
+        {
+            var id = 0;
+            try
+            {
+                var respuesta = (from db in ae.t_login where db.Usuario == usuario & db.Clave == clave select db.Id).First();
+                if(respuesta > 0)
+                {
+                    id = Convert.ToInt32(respuesta);
+                }else
+                {
+                    id = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                var val = ex.ToString();
+                id = 0;
+            }
+
+            return id;
+        }
+
+        public bool NuevoAgendamiento(string codigo, string num_consecutivo, string tiposolicitud, string fecharealizacion, string horainicio, string nombresolicitante, string correosolicitante, string celularsolicitante, string clasevideoconferencia, string tipoconfer, string despachosolicitante, string ciudadorigen, string sala, string CiudDestino, string tipoaudiencia, string contactodestino, string correodestino, string numeroproceso, string mediorecepcion,string estado, string fechaAgendamiento, string Usuario)
+        {
+            try
+            {
+               // ae.SP_NUEVO_AGENDAMIENTO(codigo, num_consecutivo, tiposolicitud, fecharealizacion, horainicio, nombresolicitante, correosolicitante, celularsolicitante, clasevideoconferencia, tipoconfer, despachosolicitante, ciudadorigen, sala, CiudDestino, tipoaudiencia, contactodestino, correodestino, numeroproceso, mediorecepcion, estado, Usuario, "", fechaAgendamiento,"","");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var mensaje = ex.ToString();
+                return false;
+            }
+        }
+
+        public bool ActualizarEstado(string consecutivo, string estado,  string descripcion, string usuario, string fechafinal, string horafinal)
+        {
+            DateTime fecha = DateTime.Now;
+            var fechaestado = Convert.ToString(fecha);
+
+            var idformulario = (from db in ae.t_formulario where db.Num_Consecutivo == consecutivo select db.Id).First();        
+
+            if (descripcion == "" || descripcion == null)
+            {
+                descripcion = "";
+            }
+            try
+            {
+                ae.SP_ACTUALIZAR_ESTADO(consecutivo.Trim().ToString(), estado.Trim().ToString(), descripcion, fechafinal, horafinal);
+
+                ae.SP_NUEVO_ESTADO(consecutivo.Trim().ToString(), estado.Trim().ToString(), descripcion.Trim().ToUpper(), fechaestado, usuario, fechafinal, horafinal, Convert.ToString(idformulario));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var mensaje = ex.ToString();
+                return false;
+            }
+        }
+
+        public string devolverfechaformateada(string fecha)
+        {
+            if(fecha == "")
+            {
+                return "";
+            }
+
+
+            var mes = fecha.Substring(0, 3);
+            var dia = fecha.Substring(4, 2);
+            var anio = fecha.Substring(8, 4);
+
+            var fechaconformato = "";
+            try
+            {
+                if(mes == "Ene")
+                {
+                    mes = "01";
+                }
+                else if(mes == "Feb")
+                {
+                    mes = "02";
+                }
+                else if(mes == "Mar")
+                {
+                    mes = "03";
+                }
+                else if (mes == "Abr")
+                {
+                    mes = "04";
+                }
+                else if (mes == "May")
+                {
+                    mes = "05";
+                }
+                else if (mes == "Jun")
+                {
+                    mes = "06";
+                }
+                else if (mes == "Jul")
+                {
+                    mes = "07";
+                }
+                else if (mes == "Ago")
+                {
+                    mes = "08";
+                }
+                else if (mes == "Sep")
+                {
+                    mes = "09";
+                }
+                else if (mes == "Oct")
+                {
+                    mes = "10";
+                }
+                else if (mes == "Nov")
+                {
+                    mes = "11";
+                }
+                else if (mes == "Dic")
+                {
+                    mes = "12";
+                }
+
+                fechaconformato = dia + "/" + mes + "/" + anio;
+
+                return fechaconformato;
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+
+        public string devolverhoraformateada(string horadispuesta)
+        {
+            if(horadispuesta == "")
+            {
+                return "";
+            }
+
+            var formatodia = horadispuesta.Substring(6, 2);
+            var hr = horadispuesta.Substring(0, 2);
+            var min = horadispuesta.Substring(2, 3) + " 00:00:00";
+            var hora = 0;
+            var horamarcada = "";
+
+            try
+            {
+                if (formatodia == "PM")
+                {
+                    if (hr != "12")
+                    {
+                        hora = Convert.ToInt32(hr) + 12;
+                    }
+                    else
+                    {
+                        hora = 0;
+                    }
+
+                    if (hora != 0)
+                    {
+                        horamarcada = hora + min;
+                    }
+                    else
+                    {
+                        horamarcada = "0" + hora + min;
+                    }
+                }
+                else
+                {
+                    horamarcada = hr + min;
+                }
+
+                return horamarcada;
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+
+        }
+        public bool CambioClave(int id, string clave)
+        {
+            try
+            {
+                ae.SP_CAMBIAR_CLAVE(id, clave);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var mensaje = ex.ToString();
+                return false;
+            }
+        }
+
+    }
+}

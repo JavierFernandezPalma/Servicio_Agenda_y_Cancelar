@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <startup> 
+        <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5.2" />
+    </startup>
+
+  <connectionStrings>
+    <add name="agendaEntities" connectionString="metadata=res://*/BDCONSEJO.csdl|res://*/BDCONSEJO.ssdl|res://*/BDCONSEJO.msl;provider=MySql.Data.MySqlClient;provider connection string=&quot;server=localhost;user id=root;password=root;database=agenda_desarrollo&quot;" providerName="System.Data.EntityClient" />
+  </connectionStrings>
+
+  <appSettings>
+    <add key="LogErrores" value="D:\OneDrive - AXEDE\Users\jafernandez\Documentos\Visual Studio 2015\Projects\AgendamientoCSJ\ServicioCancelarAgenda\SERVICIO\Log\" />
+    <add key="intervalo_tiempo" value="1" />
+    <add key="rutanavegador" value="C:\Program Files\Mozilla Firefox\firefox.exe" />
+    <add key="rutadriver" value="D:\OneDrive - AXEDE\Users\jafernandez\Documentos\Visual Studio 2015\Projects\AgendamientoCSJ\ServicioCancelarAgenda\SERVICIO\bin\Debug" />
+  </appSettings>
+</configuration>

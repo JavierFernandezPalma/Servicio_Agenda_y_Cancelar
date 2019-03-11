@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="7d346fe96b1841b4a9653a66afb8392a" Name="Diagram1" ZoomLevel="86">
+        <EntityTypeShape EntityType="agendaModel.t_formulario" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="agendaModel.t_salas" Width="1.5" PointX="5.375" PointY="3.75" />
+        <EntityTypeShape EntityType="agendaModel.t_ciudad" Width="1.5" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="agendaModel.t_clase_videoconferencia" Width="1.5" PointX="2.75" PointY="7.75" />
+        <EntityTypeShape EntityType="agendaModel.t_despacho" Width="1.5" PointX="7.75" PointY="3.75" />
+        <EntityTypeShape EntityType="agendaModel.t_despacho_solicitante" Width="1.5" PointX="4.75" PointY="8.75" />
+        <EntityTypeShape EntityType="agendaModel.t_dominios" Width="1.5" PointX="9.75" PointY="0.75" />
+        <EntityTypeShape EntityType="agendaModel.t_entidad_especialidad" Width="1.5" PointX="9.75" PointY="3.75" />
+        <EntityTypeShape EntityType="agendaModel.t_estado" Width="1.5" PointX="9.75" PointY="6.75" />
+        <EntityTypeShape EntityType="agendaModel.t_login" Width="1.5" PointX="6.75" PointY="9.75" />
+        <EntityTypeShape EntityType="agendaModel.t_medio_recepcion" Width="1.5" PointX="0.75" PointY="10.75" />
+        <EntityTypeShape EntityType="agendaModel.t_tipo_audiencia" Width="1.5" PointX="8.75" PointY="10.75" />
+        <EntityTypeShape EntityType="agendaModel.t_tipo_conferencia" Width="1.5" PointX="10.75" PointY="10.75" />
+        <EntityTypeShape EntityType="agendaModel.t_tipo_solicitud" Width="1.5" PointX="11.75" PointY="0.75" />
+        <EntityTypeShape EntityType="agendaModel.t_login_rp1cloud" Width="1.5" PointX="3.375" PointY="11.75" />
+        <EntityTypeShape EntityType="agendaModel.t_contador" Width="1.5" PointX="12.375" PointY="3.75" />
+        <EntityTypeShape EntityType="agendaModel.t_cancelacion_estado" Width="1.5" PointX="5.375" PointY="0.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

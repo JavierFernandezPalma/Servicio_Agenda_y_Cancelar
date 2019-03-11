@@ -1,0 +1,27 @@
+﻿var valor = $('#txtOculto').val();
+
+$(document).ready(function () {    
+
+    if (valor == "ok") {
+        M.toast({ html: 'LA CONTRASEÑA HA SIDO CAMBIADA CORRECTAMENTE', classes: 'rounded' });
+    } else if (valor == "no") {
+        M.toast({ html: 'ERROR', classes: 'rounded' });
+    }
+
+});
+
+
+
+$("#idbtncambiar").click(function () {
+    var clavenueva_confirmcion = $('#idconfirmarclavenueva').val();
+    var clavenueva = $('#idclavenueva').val();
+
+    if (clavenueva != clavenueva_confirmcion) {
+        M.toast({ html: 'LAS CONTRASEÑAS NUEVAS NO COINCIDEN', classes: 'rounded' });
+        return false;
+    }
+    else if (clavenueva = clavenueva_confirmcion)
+    {
+        return true;        
+    }
+});

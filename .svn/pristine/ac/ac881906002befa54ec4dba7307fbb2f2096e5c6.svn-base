@@ -1,0 +1,122 @@
+﻿@model MODELO.t_login
+
+@{
+    Layout = null;
+    var mensaje = ViewBag.Mensaje;
+}
+
+
+@if (ViewBag.Mensaje == null)
+{
+    <input type="hidden" id="txtOculto" value="" />
+}
+else
+{
+    <input type="hidden" id="txtOculto" value="@mensaje" />
+}
+
+
+
+
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ACCESO - FORMULARIO</title>
+
+    <!-- Normalize CSS -->
+    <link rel="stylesheet" href="~/Content/Login/normalize.css">
+
+    <!-- Materialize CSS -->
+    <link rel="stylesheet" href="~/Content/Login/materialize.min.css">
+
+    <!-- Material Design Iconic Font CSS -->
+    <link rel="stylesheet" href="~/Content/Login/material-design-iconic-font.min.css">
+
+    <!-- Malihu jQuery custom content scroller CSS -->
+    <link rel="stylesheet" href="~/Content/Login/jquery.mCustomScrollbar.css">
+
+    <!-- Sweet Alert CSS -->
+    <link rel="stylesheet" href="~/Content/Login/sweetalert.css">
+
+    <!-- MaterialDark CSS -->
+    <link rel="stylesheet" href="~/Content/Login/style.css">
+</head>
+
+
+<body class="font-cover" id="login">
+
+    <div class="container center section" id="idprogresbar" style="margin-top:200px;margin-bottom:400px;">
+    <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="hide" id="idpaginaagenda">
+    <div class="container-login center-align">
+        <div style="margin:15px 0;">
+            <img src="~/Content/img/Consejo.jpg" class="responsive-img" style="height:120px; width:120px; margin-bottom:20px; border-radius:25px;" />
+            <h6>SISTEMA DE AGENDAMIENTO DE AUDIENCIAS VIRTUALES</h6>
+        </div>
+        @using (Html.BeginForm())
+        {
+            <div class="input-field">
+                <input id="UserName" name="txtUsuario" type="text" class="validate" required title="ESCRIBA SU USUARIO">
+                <label for="UserName"><i class="zmdi zmdi-account"></i>&nbsp; Usuario</label>
+            </div>
+            <div class="input-field col s12">
+                <input id="Password" name="txtClave" type="password" class="validate" required title="ESCRIBA SU USUARIO">
+                <label for="Password"><i class="zmdi zmdi-lock"></i>&nbsp; Contraseña</label>
+            </div>
+            <div>
+                <button class="waves-effect waves-teal btn-large">Ingresar &nbsp; <i class="zmdi zmdi-mail-send right"></i></button>
+            </div>
+        }
+
+        <div class="divider" style="margin: 20px 0;"></div>
+    </div>
+</div>
+
+
+
+        
+
+        <!-- Sweet Alert JS -->
+        <script src="js/sweetalert.min.js"></script>
+
+        <!-- jQuery -->
+        <script src="~/Scripts/Login/jquery-2.2.0.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/jquery-2.2.0.min.js"><\/script>')</script>
+
+        <!-- Materialize JS -->
+        <script src="~/Scripts/Login/materialize.min.js"></script>
+
+    <script>
+        window.addEventListener('load', () => {
+            document.getElementById('idprogresbar').className = 'hide';
+            document.getElementById('idpaginaagenda').className = '';
+        });
+    </script>
+
+        <!-- Malihu jQuery custom content scroller JS -->
+        <script src="~/Scripts/Login/jquery.mCustomScrollbar.concat.min.js"></script>
+
+        <!-- MaterialDark JS -->
+        <script src="~/Scripts/Login/main.js"></script>
+</body>
+
+</html>

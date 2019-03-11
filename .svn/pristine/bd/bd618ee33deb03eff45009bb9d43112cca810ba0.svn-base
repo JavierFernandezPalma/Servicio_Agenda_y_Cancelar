@@ -1,0 +1,26 @@
+﻿
+
+
+//function misestados(e) {
+//        var seleccion = document.getElementById('estado').value;
+//        if (seleccion == "REALIZADA") {
+//            alert("Reaizada");
+//            document.getElementById('iddescripcion').style.display = "none";
+//            document.getElementById("idfechahora").classList.remove("hide");
+//            $("[name='descripcion']").prop("required", false);
+//        } else if (seleccion == "DUPLICADA") {
+//            document.getElementById('iddescripcion').style.display = "none";
+//            $("[name='descripcion']").prop("required", false);
+//        } else if (seleccion == "APLAZADA") {
+//            document.getElementById('iddescripcion').style.display = "block";
+//            $("[name='descripcion']").prop("required", true);
+//        } else if (seleccion == "NO REALIZADA") {
+//            document.getElementById('iddescripcion').style.display = "block";
+//            $("[name='descripcion']").prop("required", true);
+//        } else if (seleccion == "CANCELADA") {
+//            document.getElementById('iddescripcion').style.display = "block";
+//            $("[name='descripcion']").prop("required", true);
+//        }
+//}
+
+

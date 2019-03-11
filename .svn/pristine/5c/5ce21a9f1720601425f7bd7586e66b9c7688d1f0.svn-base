@@ -1,0 +1,9 @@
+﻿#fecharealizacion::placeholder
+{
+    color:#424242;
+}
+
+#horainicio::placeholder
+{
+    color:#424242;
+}

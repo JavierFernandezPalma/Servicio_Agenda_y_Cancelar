@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <startup> 
+        <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5.2" />
+    </startup>
+
+  <appSettings>
+    <add key="LogErrores" value="D:\OneDrive - AXEDE\Users\jafernandez\Documentos\Visual Studio 2015\Projects\AgendamientoCSJ\ServicioAgenda\ROBOT\Log\" />
+    <add key="intervalo_tiempo" value="1" />
+    <add key="rutanavegador" value="C:\Program Files\Mozilla Firefox\firefox.exe" />
+    <add key="rutadriver" value="D:\OneDrive - AXEDE\Users\jafernandez\Documentos\Visual Studio 2015\Projects\AgendamientoCSJ\ServicioAgenda\ROBOT\bin\Debug" />
+  </appSettings>
+
+
+  <connectionStrings>
+    <add name="agendaEntities" connectionString="metadata=res://*/BDAGENDA.csdl|res://*/BDAGENDA.ssdl|res://*/BDAGENDA.msl;provider=MySql.Data.MySqlClient;provider connection string=&quot;server=localhost;user id=root;password=root;persistsecurityinfo=True;database=agenda_desarrollo&quot;" providerName="System.Data.EntityClient" />
+  </connectionStrings>
+
+</configuration>

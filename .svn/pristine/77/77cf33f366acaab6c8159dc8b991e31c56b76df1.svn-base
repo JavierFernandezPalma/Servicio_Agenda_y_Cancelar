@@ -1,0 +1,85 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using MODELO;
+using WEB.Models;
+
+namespace WEB.Controllers
+{
+    public class EstadoAgendamientoController : Controller
+    {
+        agendaEntities ae = new agendaEntities();
+        Metodos met = new Metodos();
+        // GET: EstadoAgendamiento
+        public ActionResult EstadoAgendamiento()
+        {
+            var rol = Session["idusuario"].ToString();
+
+            if (Session["idusuario"] == null)
+            {
+                return RedirectToAction("Login", "Acceso");
+            }else if(rol == "2")
+            {
+                return RedirectToAction("Agenda", "Agenda");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult EstadoAgendamiento(string numconsecutivo, string estado, string descripcion, string fechafinalizacion, string horafinalizacion)
+        {
+
+            var fechadefinal = met.devolverfechaformateada(fechafinalizacion);
+            var horadefinal = met.devolverhoraformateada(horafinalizacion);
+
+
+            bool exists = (from db in ae.t_formulario
+                           where db.Num_Consecutivo == numconsecutivo.Trim()
+                           select db).Any();
+
+            if (exists == false)
+            {
+                ViewBag.Mensaje = "Dato Errado";
+                return View();
+            }
+
+
+            try
+            {
+               var resultado = met.ActualizarEstado(numconsecutivo, estado, descripcion, Session["nomusuario"].ToString().ToUpper(), fechadefinal, horadefinal);
+
+                if (resultado)
+                {
+                    ViewBag.Mensaje = "ok";
+                }
+                else
+                {
+                    ViewBag.Mensaje = "no";
+                }
+
+                return View();
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Mensaje = ex.ToString();
+                return View();
+            }
+        }
+
+        [HttpPost]
+        public JsonResult num_consecutivo(string data)
+        {
+            var cod = (from db in ae.t_formulario where db.Num_Consecutivo == data select db.Codigo).First();
+            var codigo = (from db in ae.t_formulario where db.Num_Consecutivo == data select db.Codigo).First();
+            var codigo_despacho = cod.Substring(0,12);
+            var nombre_despacho = (from db in ae.t_despacho where db.CODIGO_DESPACHO == codigo_despacho select db.NOMBRE).First();
+
+            var info = nombre_despacho +"|"+ codigo;
+            return Json(info, JsonRequestBehavior.AllowGet);
+        }
+
+    }
+}

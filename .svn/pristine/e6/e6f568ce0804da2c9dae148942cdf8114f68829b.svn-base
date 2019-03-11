@@ -1,0 +1,219 @@
+﻿
+@{
+    ViewBag.Title = "EstadoAgendamiento";
+    var mensaje = ViewBag.Mensaje;
+}
+
+@if (ViewBag.Mensaje == null)
+{
+    <input type="hidden" id="txtOculto" value="" />
+}
+else
+{
+    <input type="hidden" id="txtOculto" value="@mensaje" />
+}
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+
+
+
+<div class="container center section" id="idprogresbar" style="margin-top:200px;margin-bottom:400px;">
+    <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="hide" id="idpaginaagenda">
+
+    <div class="row" style="margin-top:20px;">
+        <div class="col s12">
+            <div class="row card-panel z-depth-5">
+                <div class="col s12 center">
+                    <h5>ESTADO DE AGENDAMIENTO</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row" style="margin-top:20px;">
+        <div class="col s12">
+            @using (Html.BeginForm())
+            {
+                <div class="card-panel z-depth-5">
+                    <div class="row" style="margin-bottom:50px;">
+                        <div class="input-field col s12 m6">
+                            <i class="material-icons prefix">mode_edit</i>
+                            <input id="numconsecutivo" name="numconsecutivo" type="text" class="validate" required>
+                            <label for="numconsecutivo">N° CONSECUTIVO</label>
+                        </div>
+
+                        <div class="input-field col s12 m6">                            
+                            <i class="material-icons prefix">playlist_add_check</i>
+                            <label for="estado">                                
+                                <select class="js-example-basic-single js-states form-control" id="estado" onchange="misestados(event)" name="estado" style="width: 95%;">
+                                    <option value="" disabled selected>SELECCIONE EL TIPO DE SOLICITUD</option>
+                                    <option value="REALIZADA">REALIZADA</option>
+                                    <option value="DUPLICADA">DUPLICADA</option>
+                                    <option value="APLAZADA">APLAZADA</option>
+                                    <option value="NO REALIZADA">NO REALIZADA</option>
+                                    <option value="CANCELADA">CANCELADA</option>
+                                </select>
+                            </label>
+
+                        </div>
+                    </div>
+
+                    <!--Inicio de fecha y hora-->
+                    <div class="row hide" style="margin-bottom:50px;" id="idfechahora">
+                        <div class="input-field col s12 m6">
+                            <i class="material-icons prefix">timer</i>
+                            <input type="text" name="fechafinalizacion" id="idfechafinalizacion" class="datepicker" placeholder="FECHA DE FINALIZACIÓN">
+                        </div>
+
+                        <div class="input-field col s12 m6">
+                            <i class="material-icons prefix">hourglass_full</i>
+                            <input type="text" name="horafinalizacion" class="timepicker" id="idhorafinalizacion" placeholder="HORA DE FINALIZACIÓN" required>
+                        </div>
+                    </div>
+                    <!--Inicio de fecha y hora-->
+
+
+                    <div class="row hide" id="iddesp">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">airplay</i>
+                            <input id="iddespacho" name="iddespacho" type="text" placeholder="DESPACHO" >
+                            <label for="iddespacho">DESPACHO</label>
+                        </div>                        
+                    </div>
+                    <div class="row hide" id="idcod">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">airplay</i>
+                            <input id="idcodigo" name="iddespacho" type="text" placeholder="CODIGO" >
+                            <label for="idcodigo">CODIGO</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s12" style="display:none;" id="iddescripcion">
+                            <i class="material-icons prefix">mode_edit</i>
+                            <textarea id="txtdescripcion" class="materialize-textarea validate" name="descripcion"></textarea>
+                            <label for="txtdescripcion">DESCRIPCION</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-panel z-depth-5">
+                    <div class="row">                    
+                            <div class="col s12 m6 center" style="margin-bottom:20px;">
+                                <button class="btn-large waves-effect waves-light z-depth-5" type="submit" name="btnGuardar">
+                                    GUARDAR
+                                    <i class="material-icons right">send</i>
+                                </button>
+                            </div>
+                            <div class="col s12 m6 center">
+                                <a href='@Url.Action("DescargarLista","Agenda")' class="waves-effect waves-light btn-large z-depth-5"><i class="material-icons right">cloud_download</i>DESCARGAR</a>
+                            </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+    window.addEventListener('load', () => {
+        document.getElementById('idprogresbar').className = 'hide';
+        document.getElementById('idpaginaagenda').className = '';
+    });
+</script>
+<script src="~/Scripts/jsEstado.js"></script>
+
+
+<script>
+
+    //Inicio de mensaje Toast
+    var valor = $('#txtOculto').val();
+    $(document).ready(function () {
+        if (valor == "ok") {
+            M.toast({ html: 'ACTUALIZADO', classes: 'rounded' });
+        } else if (valor == "no") {
+            M.toast({ html: 'ERROR', classes: 'rounded' });
+        }
+    });
+    //Fin de mensaje Toast
+
+
+    // Inicio Evento para saber que despacho es a raiz del numero de consecutivo
+    $('#numconsecutivo').change(function () {
+        var valor = $('#numconsecutivo').val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("num_consecutivo", "EstadoAgendamiento")',
+            data: JSON.stringify({ 'data': valor }),
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (data) {                
+
+                var separador = data.split('|');
+                $('#iddespacho').val(separador[0]);
+                $('#idcodigo').val(separador[1]);
+
+                $("#iddesp").removeClass("hide");
+                $("#idcod").removeClass("hide");
+                
+            },
+            error: function (errormessage) {
+                alert("Error suscitado");
+            }
+        });
+    });
+    // Fin Evento para saber que despacho es a raiz del numero de consecutivo
+
+
+
+    function misestados(e) {
+        var seleccion = document.getElementById('estado').value;
+        if (seleccion == "REALIZADA") {            
+            document.getElementById('iddescripcion').style.display = "none";
+            document.getElementById("idfechahora").classList.remove("hide");
+            $("[name='fechafinalizacion']").prop("required", true);
+            $("[name='horafinalizacion']").prop("required", true);
+            $("[name='descripcion']").prop("required", false);
+        } else if (seleccion == "DUPLICADA") {
+            document.getElementById('iddescripcion').style.display = "none";
+            document.getElementById("idfechahora").classList.add("hide");
+            $("[name='descripcion']").prop("required", false);
+        } else if (seleccion == "APLAZADA") {
+            document.getElementById('iddescripcion').style.display = "block";
+            document.getElementById("idfechahora").classList.add("hide");
+            $("[name='descripcion']").prop("required", true);
+        } else if (seleccion == "NO REALIZADA") {
+            document.getElementById('iddescripcion').style.display = "block";
+            document.getElementById("idfechahora").classList.add("hide");
+            $("[name='descripcion']").prop("required", true);
+        } else if (seleccion == "CANCELADA") {
+            document.getElementById('iddescripcion').style.display = "block";
+            document.getElementById("idfechahora").classList.add("hide");
+            $("[name='descripcion']").prop("required", true);
+        }
+    }
+
+
+
+
+
+</script>

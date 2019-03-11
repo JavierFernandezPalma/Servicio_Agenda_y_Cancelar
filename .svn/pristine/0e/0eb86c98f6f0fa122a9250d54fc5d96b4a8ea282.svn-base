@@ -1,0 +1,335 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Configuration;
+using MODELO;
+using SpreadsheetLight;
+using System.Data;
+using DocumentFormat.OpenXml;
+using System.IO;
+using WEB.Models;
+using Microsoft.Office.Interop.Excel;
+using OfficeOpenXml;
+using System.Drawing;
+using OfficeOpenXml.Style;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
+using System.Diagnostics;
+
+namespace WEB.Models
+{
+    public class Robot
+    {
+        IWebDriver driver = new FirefoxDriver();
+        //IWebDriver driver = new ChromeDriver();
+        DateTime HoyAhora = DateTime.Now; // Extrae la facha y hora actual
+        agendaEntities tablaFormulario = new agendaEntities();
+
+
+        public void IniciarNavegador()
+        {
+
+
+            driver.Navigate().GoToUrl("http://my.rp1cloud.com/");  //http://my.rp1cloud.com/
+            driver.Manage().Window.Minimize(); //Minimixar ventana del navegador
+            driver.FindElement(By.Name("accountLogin")).SendKeys("milena.suarez@tribeca.com.co");
+            driver.FindElement(By.Name("accountPassword")).SendKeys("Milena123");
+            driver.FindElement(By.ClassName("submit")).Click();
+
+            driver.Manage().Window.Maximize(); //Minimixar ventana del navegador
+
+            //Actions action = new Actions(driver);
+            //action.MoveByOffset(800, 623).Click().Build().Perform();
+            //Thread.Sleep(500);
+            //action.Click();
+
+
+            //    IWebDriver driver2 = new FirefoxDriver();     // Iniciar session con Firefox
+            //    driver.Url = "http://my.rp1cloud.com/";
+
+            //IWebElement webElement = driver.FindElement(By.TagName("body"));
+            //webElement.SendKeys(Keys.Tab);
+            //Thread.Sleep(5000);
+            //webElement.SendKeys(Keys.Control + "t");
+
+        }
+
+        public void SeleccionarCalendario()
+        {
+
+            try
+            {
+                driver.Navigate().GoToUrl("https://my.rp1cloud.com/meetings/schedule");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        public void ProgramarReunion()
+        {
+            try
+            {
+                driver.FindElement(By.XPath("//*[@id='meeting-controls']/div/div[2]/div/div/button")).Click();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+
+        public void LlenarCampos()
+        {
+            var idregistro = (from db in tablaFormulario.t_formulario select db.Id).Max();
+            var tipo_solicitud = (from db in tablaFormulario.t_formulario where db.Id == idregistro select db.Codigo).First();
+            Console.WriteLine("Tipo solicitud: " + tipo_solicitud);
+
+            driver.FindElement(By.Id("name")).SendKeys(tipo_solicitud);
+            driver.FindElement(By.Name("startTime")).Clear();
+            driver.FindElement(By.Name("startTime")).SendKeys("11:45pm");
+
+        }
+
+        public void SeleccionarZona()
+        {
+            var option = driver.FindElement(By.Name("timeZone"));
+            var selectElement = new SelectElement(option);
+            //System.Threading.Thread.Sleep(5000); // Pausa el curso de los eventos por cinco segundos
+            selectElement.SelectByText("Zulu");
+            Console.Read();
+        }
+
+
+        public int SeleccionarAnoMes()
+        {
+
+            int diferenciaMes, diferenciaAno;
+
+            var idregistro = (from db in tablaFormulario.t_formulario select db.Id).Max();
+            var fecha_realizacion = (from db in tablaFormulario.t_formulario where db.Id == idregistro select db.FechaRealizacion).First();
+
+            Console.WriteLine("Fecha y hora: " + fecha_realizacion);
+
+            int mesHoy = int.Parse(DateTime.Now.Month.ToString());
+            int anoHoy = int.Parse(DateTime.Now.Year.ToString());
+            int mesRegistro = int.Parse(Convert.ToDateTime(fecha_realizacion).Month.ToString());
+            int anoRegistro = int.Parse(Convert.ToDateTime(fecha_realizacion).Year.ToString());
+            int diaRegistro = int.Parse(Convert.ToDateTime(fecha_realizacion).Day.ToString());
+
+            diferenciaMes = mesRegistro - mesHoy;
+            diferenciaAno = anoRegistro - anoHoy;
+
+            if (diferenciaAno == 0)
+            {
+
+                IWebElement webElement = driver.FindElement(By.Name("startDate"));
+                webElement.Click();
+
+                webElement = driver.FindElement(By.XPath("//*[@id='addMeetingForm']/div[2]/div[1]/div/div/div/table/thead/tr/th[3]")); //Seleccionar Mes Incremental
+
+                for (int i = 0; i < diferenciaMes; i++)
+                {
+                    webElement.Click();
+                }
+            }
+            else if (diferenciaAno > 0)
+            {
+                IWebElement webElement = driver.FindElement(By.Name("startDate"));
+                webElement.Click();
+
+                webElement = driver.FindElement(By.XPath("//*[@id='addMeetingForm']/div[2]/div[1]/div/div/div/table/thead/tr/th[3]")); //Seleccionar Mes Incremental
+
+                for (int i = 0; i < (diferenciaAno * 12) - mesHoy; i++)
+                {
+                    webElement.Click();
+                }
+
+                webElement = driver.FindElement(By.XPath("//*[@id='addMeetingForm']/div[2]/div[1]/div/div/div/table/thead/tr/th[3]")); //Seleccionar Mes Incremental
+
+                for (int i = 0; i < mesRegistro; i++)
+                {
+                    webElement.Click();
+                }
+
+            }
+
+            //webElement = driver.FindElement(By.XPath("//*[@id='addMeetingForm']/div[2]/div[1]/div/div/div/table/thead/tr/th[1]")); //Seleccionar Mes Decremental 
+            ////List<IWebElement> list = driver.FindElements(By.XPath("//*[@id='addMeetingForm']/div[2]/div[1]/div/div/div/div/table/tbody")).ToList();
+            return diaRegistro;
+        }
+
+        public void seleccionarDia(int dia)
+        {
+
+
+            int diaCalendario, j;
+
+
+            if (dia < 8)
+            {
+
+                for (int i = 1; i < 8; i++)
+                {
+                    var numDia = driver.FindElement(By.XPath("//*[@id='addMeetingForm']/div[2]/div[1]/div/div/div/div/table/tbody/tr[1]/td[" + i + "]"));
+                    diaCalendario = int.Parse(numDia.Text);
+                    Console.WriteLine("DiaCalendario: " + diaCalendario + " dia: " + dia);
+
+                    if ((diaCalendario == dia))
+                    {
+                        numDia.Click();
+                        Console.WriteLine("Encontrado");
+                        return;
+                    }
+
+                }
+
+            }
+
+            else if (dia > 1 && dia < 22)
+            {
+                j = 2;
+                do
+                {
+                    for (int i = 1; i < 8; i++)
+                    {
+                        var numDia = driver.FindElement(By.XPath("//*[@id='addMeetingForm']/div[2]/div[1]/div/div/div/div/table/tbody/tr[" + j + "]/td[" + i + "]"));
+                        diaCalendario = int.Parse(numDia.Text);
+                        Console.WriteLine("DiaCalendario: " + diaCalendario + " dia: " + dia);
+
+                        if ((diaCalendario == dia))
+                        {
+                            numDia.Click();
+                            Console.WriteLine("Encontrado");
+                            return;
+                        }
+
+                    }
+
+                    j = j + 1;
+
+                } while (j != 4);
+
+            }
+
+            if (dia > 15 && dia < 32)
+            {
+                j = 4;
+                do
+                {
+                    for (int i = 1; i < 8; i++)
+                    {
+                        var numDia = driver.FindElement(By.XPath("//*[@id='addMeetingForm']/div[2]/div[1]/div/div/div/div/table/tbody/tr[" + j + "]/td[" + i + "]"));
+                        diaCalendario = int.Parse(numDia.Text);
+                        Console.WriteLine("DiaCalendario: " + diaCalendario + " dia: " + dia);
+
+                        if ((diaCalendario == dia))
+                        {
+                            numDia.Click();
+                            Console.WriteLine("Encontrado");
+                            return;
+                        }
+
+                    }
+
+                    j = j + 1;
+
+                } while (j != 6);
+
+            }
+
+            if (dia > 29)
+            {
+                for (int i = 1; i < 8; i++)
+                {
+                    var numDia = driver.FindElement(By.XPath("//*[@id='addMeetingForm']/div[2]/div[1]/div/div/div/div/table/tbody/tr[6]/td[" + i + "]"));
+                    diaCalendario = int.Parse(numDia.Text);
+                    Console.WriteLine("DiaCalendario: " + diaCalendario + "dia: " + dia);
+
+                    if ((diaCalendario == dia))
+                    {
+                        numDia.Click();
+                        Console.WriteLine("Encontrado");
+                        return;
+                    }
+
+                }
+            }
+
+        }
+
+        public void AdicionarCorreo()
+        {
+
+            var idregistro = (from db in tablaFormulario.t_formulario select db.Id).Max();
+            var correos = (from db in tablaFormulario.t_formulario where db.Id == idregistro select db.CorreoDeSolicitante).First();
+            //string correos = "totojavi81@hotmail.com|jaugustofernandez@unipanamericana.edu.co|jafernandez@axede.com.co";
+
+
+            string[] separarCorreos;
+            separarCorreos = correos.Split('|');
+            var contarCorreos = separarCorreos.Count();
+
+
+            for (int i = 0; i < separarCorreos.Count(); i++)
+            {
+                IWebElement webElement = driver.FindElement(By.Name("email"));
+                webElement.Click();
+                webElement.SendKeys(separarCorreos[i].ToLower());
+
+                webElement = driver.FindElement(By.XPath("//*[@id='addMeetingForm']/div[7]/div[2]/div/a"));
+                webElement.Click();
+
+
+            }
+
+
+        }
+
+        public void EscribirMensaje()
+        {
+            var idregistro = (from db in tablaFormulario.t_formulario select db.Id).Max();
+            var consecutivo = (from db in tablaFormulario.t_formulario where db.Id == idregistro select db.Num_Consecutivo).First();
+            driver.FindElement(By.Name("message")).SendKeys("Recuerde que el número del consecutivo de esta audiencia es: " + consecutivo); //
+
+        }
+
+
+        public void Ocultar()
+        {
+
+            System.Threading.Thread.Sleep(3000); // Pausa el curso de los eventos por cinco segundos
+            //driver.Manage().Window.Minimize(); //Minimixar ventana del navegador
+            driver.Close();
+            driver.Quit();
+            driver = null;
+
+        }
+
+        public void EjecutarPrograma()
+        {
+            ProcessStartInfo info = new ProcessStartInfo();
+
+            info.UseShellExecute = true;
+            info.FileName = "RobotPrograma.msi";
+            info.WorkingDirectory = "D:/OneDrive - AXEDE/Users/jafernandez/Documentos/Visual Studio 2015/Projects/RobotAgenda/RobotPrograma/Debug/";
+
+            Process.Start(info);
+        }
+
+        public void Guardar()
+        {
+            IWebElement webElement = driver.FindElement(By.TagName("body"));
+            webElement.SendKeys(Keys.Tab);
+            webElement.SendKeys(Keys.Tab);
+            webElement.SendKeys(Keys.Enter);
+            System.Threading.Thread.Sleep(5000); // Pausa el curso de los eventos por cinco segundos
+        }
+
+
+    }
+}

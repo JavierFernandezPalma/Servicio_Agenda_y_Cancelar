@@ -1,0 +1,127 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using WEB.Models;
+using MODELO;
+
+namespace WEB.Controllers
+{
+    public class AccesoController : Controller
+    {
+        // GET: Acceso
+        agendaEntities ae = new agendaEntities();
+        Metodos met = new Metodos();
+        public ActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Login(string txtUsuario, string txtClave)
+        {
+            if(txtUsuario.Trim() == "" || txtClave.Trim() =="")
+            {
+                return View();
+            }
+            try
+            {
+                var IdUsuario = met.AccesoAgenda(txtUsuario.Trim(),txtClave.Trim());
+                var tipousuario = (from db in ae.t_login where db.Id == IdUsuario select db.TipoUsuario).First();
+                var nomusuario = (from db in ae.t_login where db.Id == IdUsuario select db.Usuario).First();
+
+                if (IdUsuario > 0)
+                {
+                    ViewBag.Mensaje = "ok";
+                    Session["idusuario"] = IdUsuario;
+                    Session["tipousuario"] = tipousuario;
+                    Session["nomusuario"] = nomusuario;
+
+                    return RedirectToAction("Agenda", "Agenda");
+                }else
+                {
+                    ViewBag.Mensaje = "no";
+                    return View();
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Mensaje = "error";
+                return View();
+            }
+            
+        }
+
+        [AllowAnonymous]
+        public ActionResult CerrarSesion()
+        {
+            Session.Abandon();
+            return RedirectToAction("Login", "Acceso");
+
+
+        }
+
+        public ActionResult CambioDeClave()
+        {
+            if (Session["idusuario"] == null)
+            {
+                return RedirectToAction("Login", "Acceso");
+            }
+
+            return View();
+        }
+        [HttpPost]
+        public ActionResult CambioDeClave(string clave_actual, string nuevaclave)
+        {
+            var idusuario = Session["idusuario"].ToString();
+            var id = Convert.ToInt32(idusuario);
+            var clave = (from db in ae.t_login where db.Id == id select db.Clave).First();
+
+            if(clave_actual != clave)
+            {
+                return View();
+            }
+
+            try
+            {
+                var resultado = met.CambioClave(id, nuevaclave);
+
+                if (resultado)
+                {
+                    ViewBag.Mensaje = "ok";                    
+                }else
+                {
+                    ViewBag.Mensaje = "no";
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Mensaje = "no";
+                var mensaje = ex.ToString();
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult ValidarClaveAnterior(string data)
+        {
+            var valor = 0;
+            var idusuario = Session["idusuario"].ToString();
+            var id = Convert.ToInt32(idusuario);
+            var clave = (from db in ae.t_login where db.Id == id select db.Clave).First();
+
+            if (clave == data)
+            {
+                valor = 1;
+            }else
+            {
+                valor = 0;
+            }
+
+            return Json(valor, JsonRequestBehavior.AllowGet);
+        }
+    }
+}

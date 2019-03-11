@@ -1,0 +1,295 @@
+﻿var valor = $('#txtOculto').val();
+var valor2 = $('#txtConsecutivo').val();
+
+
+
+$(document).ready(function () {
+
+    //Inicio de funcion para dropdown principal
+    $(".dropdown-trigger").dropdown({
+        hover:true
+    });    
+    //Fin de funcion para dropdown principal
+
+    
+    //Inicio de funcion para Hamburgueza
+    $('.sidenav').sidenav();
+    //Fin de funcion para Hamburgueza
+
+    //Inicio de funcion para Select
+    //$('select').formSelect();
+    $('.js-example-basic-single').select2();
+    $('.js-example-basic-multiple').select2();
+    $(".js-example-theme-multiple").select2({
+        theme: "classic"
+    });
+    //Fin de funcion para Select
+
+    //Inicio de funcion para Calendario
+    $('.datepicker').datepicker();
+    //Fin de funcion para Calendario
+
+    //Inicio de funcion para Reloj
+    $('.timepicker').timepicker();
+    //Fin de funcion para Reloj
+
+    //Modal Fechas rango
+    $('.modal').modal();
+
+    //Inicio de Auto-complete
+    $('input.autocomplete').autocomplete({
+        data: {
+            "81001": null,
+            "05001": null,
+            "25286": null,
+            "25899": null,
+            "27001": null,
+            "27001": null,
+            "27001": null,
+            "27075": null,
+            "27361": null,
+            "27615": null,
+            "27006": null,
+            "27800": null,
+            "05154": null,
+            "41001": null,
+            "41001": null,
+            "41001": null,
+            "41298": null,
+            "41396": null,
+            "41668": null,
+            "41551": null,
+            "44001": null,
+            "47001": null,
+            "47001": null,
+            "05360": null,
+            "47245": null,
+            "50001": null,
+            "50001": null,
+            "50001": null,
+            "50001": null,
+            "50350": null,
+            "50325": null,
+            "52079": null,
+            "52001": null,
+            "52001": null,
+            "05361": null,
+            "52001": null,
+            "52001": null,
+            "52001": null,
+            "52001": null,
+            "52001": null,
+            "52250": null,
+            "52838": null,
+            "52835": null,
+            "52835": null,
+            "05579": null,
+            "54001": null,
+            "54001": null,
+            "54001": null,
+            "54001": null,
+            "54498": null,
+            "54498": null,
+            "54518": null,
+            "66001": null,
+            "66001": null,
+            "68081": null,
+            "05591": null,
+            "68861": null,
+            "68001": null,
+            "68001": null,
+            "68001": null,
+            "68001": null,
+            "68001": null,
+            "68001": null,
+            "68001": null,
+            "68001": null,
+            "68001": null,
+            "05250": null,
+            "68432": null,
+            "73001": null,
+            "73001": null,
+            "73001": null,
+            "76001": null,
+            "76001": null,
+            "76001": null,
+            "05736": null,
+            "76001": null,
+            "76001": null,
+            "76147": null,
+            "76520": null,
+            "76520": null,
+            "76520": null,
+            "76520": null,
+            "76113": null,
+            "76622": null,
+            "76109": null,
+            "05756": null,
+            "76834": null,
+            "81736": null,
+            "85001": null,
+            "85162": null,
+            "86001": null,
+            "86001": null,
+            "86568": null,
+            "86568": null,
+            "86573": null,
+            "86749": null,
+            "05847": null,
+            "88001": null,
+            "91001": null,
+            "94001": null,
+            "95001": null,
+            "97001": null,
+            "99001": null,
+            "25900": null,
+            "50001": null,
+            "76736": null,
+            "15759": null,
+            "81001": null,
+            "08001": null,
+            "50400": null,
+            "52399": null,
+            "54810": null,
+            "08001": null,
+            "08001": null,
+            "08001": null,
+            "63001": null,
+            "63001": null,
+            "63001": null,
+            "63001": null,
+            "63001": null,
+            "11001": null,
+            "05001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "05001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "05001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "11001": null,
+            "05001": null,
+            "11001": null,
+            "13001": null,
+            "13001": null,
+            "13244": null,
+            "13654": null,
+            "13744": null,
+            "15001": null,
+            "15001": null,
+            "15693": null,
+            "17001": null,
+            "05001": null,
+            "17001": null,
+            "17001": null,
+            "17001": null,
+            "18001": null,
+            "18001": null,
+            "18001": null,
+            "18094": null,
+            "18592": null,
+            "18410": null,
+            "18753": null,
+            "05001": null,
+            "19001": null,
+            "19001": null,
+            "19001": null,
+            "19318": null,
+            "19573": null,
+            "19698": null,
+            "19142": null,
+            "20001": null,
+            "20001": null,
+            "23001": null,
+            "05001": null,
+            "23001": null,
+            "25260": null,
+            "25151": null,
+            "25754": null,
+            "25214": null,
+            "25269": null,
+            "25269": null,
+            "25307": null,
+            "25799": null,
+            "25286": null
+        },
+    });
+    //Fin del Auto-Complete
+
+    
+    if (valor == "ok" && valor2 != null) {
+        M.toast({ html: 'Registro agregado correctamente', classes: 'rounded' });
+        M.toast({ html: 'N° consec : ' + valor2, classes: 'rounded', inDuration:900 });
+    } else if (valor == "no") {
+        M.toast({ html: 'ERROR', classes: 'rounded' });
+    }
+        
+});
+
+function valida(e) {
+    tecla = (document.all) ? e.keyCode : e.which;
+
+    //Tecla de retroceso para borrar, siempre la permite
+    if (tecla == 8) {
+        return true;
+    }
+
+    // Patron de entrada, en este caso solo acepta numeros
+    patron = /[0-9]/;
+    tecla_final = String.fromCharCode(tecla);
+    return patron.test(tecla_final);
+}
+
+
+$("#idguardardatos").click(function () {
+
+    var numproceso = $('#numproceso').val();
+    var longi_num_proc = numproceso.length;
+
+    var celsolic = $('#celsolic').val();
+    var longi_celular = celsolic.length;
+    
+    if (longi_num_proc < 23) {
+        M.toast({ html: 'Número de Proceso incompleto, minimo 23 digitos', classes: 'rounded' });
+        return false;
+    } else if (longi_num_proc > 23) {
+        M.toast({ html: 'Número de Proceso errado, maximo 23 digitos', classes: 'rounded' });
+        return false;
+    }
+
+    if (longi_celular < 10) {
+        M.toast({ html: 'Número de celular incompleto, minimo 10 digitos', classes: 'rounded' });
+        return false;
+    } else if (longi_celular > 10) {
+        M.toast({ html: 'Número de celular errado, maximo 10 digitos', classes: 'rounded' });
+        return false;
+    }
+
+
+
+});

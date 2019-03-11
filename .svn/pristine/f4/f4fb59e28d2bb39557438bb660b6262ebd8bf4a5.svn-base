@@ -1,0 +1,427 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Configuration;
+using MODELO;
+using SpreadsheetLight;
+using System.Data;
+using DocumentFormat.OpenXml;
+using System.IO;
+using WEB.Models;
+using Microsoft.Office.Interop.Excel;
+using OfficeOpenXml;
+using System.Drawing;
+using OfficeOpenXml.Style;
+
+
+
+namespace WEB.Controllers
+{
+    public class AgendaController : Controller
+    {
+        agendaEntities ae = new agendaEntities();
+        Metodos met = new Metodos();
+
+        
+        // GET: Agenda
+        public ActionResult Agenda(string codigo_ciudad)
+        {
+            Session["tipousuario"] = Session["tipousuario"];
+            if (Session["idusuario"] == null)
+            {
+                return RedirectToAction("Login", "Acceso");
+            }
+
+                                  
+
+            ViewData["TipoSolicitud"] = ae.t_tipo_solicitud.ToList();
+            ViewData["DespachoSolicitante"] = ae.t_despacho_solicitante.ToList();
+            ViewData["ciudad"] = (from db in ae.t_ciudad select db).ToList();
+            ViewData["mediorecepcion"] = ae.t_medio_recepcion.ToList();
+            ViewData["claseconferencia"] = ae.t_clase_videoconferencia.ToList();
+            ViewData["tipoconferencia"] = ae.t_tipo_conferencia.ToList();
+            ViewData["sede_entidad"] = ae.t_entidad_especialidad.ToList();
+            ViewData["despacho"] = ae.t_despacho.ToList();
+            ViewData["tipoaudiencia"] = ae.t_tipo_audiencia.ToList();
+            ViewData["sede_enti"] = (from db in ae.t_entidad_especialidad
+                                     where db.Sala_Seccion_Despacho != "" && db.Sala_Seccion_Despacho != null
+                                     select db).ToList();
+            ViewData["salas"] = ae.t_salas.ToList();
+            ViewData["dominio"] = ae.t_dominios.ToList();
+
+            var lista = ae.t_despacho.ToList();
+            ViewBag.ListaDespachos = new SelectList(lista, "CODIGO_DESPACHO", "NOMBRE");
+
+
+            return View();
+        }
+
+        /*
+         CAMPOS DEL FORMULARIO
+         =====================
+
+        tiposolicitud, fecharealizacion, horainicio, nombresolicitante, correosolicitante(usuarioemail-dominio), celularsolicitante,
+        clasevideoconferencia, tipoconferencia, despachosolicitante, ciudadorigen, sala, ciudaddestino, tipoaudiencia, numeroproceso,
+        mediorecepcion
+             
+       */
+
+        [HttpPost]
+        public ActionResult Agenda(string[] correosadicionales, string tiposolicitud, string fecharealizacion, string rangoiniciofecha, string rangofinfecha, string horainicio, string nombresolicitante, string usuarioemail, string dominio, string celularsolicitante, string clasevideoconferencia, string[] tipoconferencia, string despachosolicitante, string ciudadorigen, string codigosala, string[] ciudaddestino, string tipoaudiencia, string contactodestino, string correodestino, string numeroproceso, string mediorecepcion)
+        {
+            ciudadorigen = ciudadorigen.Substring(0,5);
+            var sala = "";
+
+            if (codigosala == null)
+            {
+                sala = "";
+            }else
+            {
+                sala = codigosala;
+            }
+                        
+
+
+            ViewData["TipoSolicitud"] = ae.t_tipo_solicitud.ToList();
+            ViewData["DespachoSolicitante"] = ae.t_despacho_solicitante.ToList();
+            ViewData["ciudad"] = ae.t_ciudad.ToList();
+            ViewData["mediorecepcion"] = ae.t_medio_recepcion.ToList();
+            ViewData["claseconferencia"] = ae.t_clase_videoconferencia.ToList();
+            ViewData["tipoconferencia"] = ae.t_tipo_conferencia.ToList();
+            ViewData["sede_entidad"] = ae.t_entidad_especialidad.ToList();
+            ViewData["despacho"] = ae.t_despacho.ToList();
+            ViewData["tipoaudiencia"] = ae.t_tipo_audiencia.ToList();
+            ViewData["sede_enti"] = (from db in ae.t_entidad_especialidad
+                                     where db.Sala_Seccion_Despacho != "" && db.Sala_Seccion_Despacho != null
+                                     select db).ToList();
+            ViewData["dominio"] = ae.t_dominios.ToList();
+            ViewData["salas"] = ae.t_salas.ToList();
+
+            var mensaje = false;
+            try
+            {
+                var respuesta = CrearGuardar(correosadicionales, tiposolicitud.Trim().ToUpper(), fecharealizacion.Trim(), horainicio.Trim().ToUpper(), nombresolicitante.Trim().ToUpper(), usuarioemail.Trim().ToUpper(), dominio.Trim().ToUpper(), celularsolicitante.Trim().ToUpper(), clasevideoconferencia.Trim().ToUpper(), tipoconferencia, despachosolicitante.Trim().ToUpper(), ciudadorigen.Trim().ToUpper(), sala.Trim().ToUpper(), ciudaddestino, tipoaudiencia.Trim().ToUpper(), contactodestino, correodestino, numeroproceso.Trim().ToUpper(), mediorecepcion.Trim().ToUpper(), Session["nomusuario"].ToString().ToUpper());
+                if (respuesta)
+                {
+                    mensaje = true;
+                }
+                else
+                {
+                    mensaje = false;
+                }
+                var men = mensaje;
+
+
+                var IdFormulario = (from db in ae.t_formulario select db.Id).Max();
+                var consecutivo = (from db in ae.t_formulario where db.Id == IdFormulario select db.Num_Consecutivo).First();
+
+                ViewBag.Consecutivo = consecutivo.ToString();
+
+                ViewBag.Mensaje = "ok";
+
+                Robot pr = new Robot();
+
+                pr.IniciarNavegador();
+                pr.SeleccionarCalendario();
+                pr.ProgramarReunion();
+                pr.LlenarCampos();
+                int diaRegistro = pr.SeleccionarAnoMes();
+                pr.seleccionarDia(diaRegistro);
+                pr.AdicionarCorreo();
+                pr.EscribirMensaje();
+                pr.Guardar();
+                pr.Ocultar();
+
+
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Mensaje = "no";
+                throw ex;
+            }
+        }
+
+        public bool CrearGuardar(string[] correosadicionales, string tiposolicitud, string fecharealizacion, string horainicio, string nombresolicitante, string usuarioemail, string dominio, string celularsolicitante, string clasevideoconferencia, string[] tipoconferencia, string despachosolicitante, string ciudadorigen, string sala, string[] ciudaddestino, string tipoaudiencia, string contactodestino, string correodestino, string numeroproceso, string mediorecepcion, string usuario)
+        {
+            var correo_adicionales = "";
+            var correosopcionalesadicionales = "";
+
+            if (correosadicionales != null)
+            {
+                foreach (var item in correosadicionales)
+                {
+                    correo_adicionales += item + "|";
+                }
+
+                var long_correo_destino = correo_adicionales.Length;
+
+                correosopcionalesadicionales = correo_adicionales.Substring(0, long_correo_destino - 1);
+
+                
+
+            }
+            else
+            {
+                correosopcionalesadicionales = "";
+            }
+
+
+            var contacdestin = "";
+            var correodestin = "";
+            var nombresala = "";
+
+            if (sala != "")
+            {
+                contacdestin = (from db in ae.t_salas where db.CodigoSala == sala select db.NombreContacto).First();
+                correodestin = (from db in ae.t_salas where db.CodigoSala == sala select db.Correo).First();
+                nombresala = (from db in ae.t_salas where db.CodigoSala == sala select db.NombreSala).First();
+            }else
+            {
+                contacdestin = "";
+                correodestin = "";
+                nombresala = "";
+            }
+
+            var anioradicacion = fecharealizacion.Substring(8,4);            
+            
+
+            DateTime fecha = DateTime.Now;
+            var fechaAgendamiento = Convert.ToString(fecha);
+
+            var fech = fechaAgendamiento.Replace("/", "").Replace(":", "").Replace(" ", "").ToString();
+            var fch = fech;
+            fech = fech.Substring(0,8);
+
+            var correosolicitante = "";
+
+            if (correosopcionalesadicionales !="")
+            {
+                 correosolicitante = (usuarioemail.Trim() + dominio.Trim()).ToUpper() + "|" + correosopcionalesadicionales.Trim().ToUpper();
+            }else
+            {
+                 correosolicitante = (usuarioemail.Trim() + dominio.Trim()).ToUpper();
+            }
+
+
+            
+
+            var horagrabacion = horainicio.Replace(":", "").Replace(" ", "").Replace("AM", "").Replace("PM", "") + "00";
+
+            var numproceso = numeroproceso.Substring(0, 5);
+
+            
+
+
+            var codigo = despachosolicitante.Trim() + anioradicacion.Trim()+ numproceso + "00" + "_" + tipoaudiencia.Trim() + despachosolicitante.Trim() + nombresala + "_01_"+ fech + "_" + horagrabacion;
+
+            var num_consecutivo = anioradicacion + "_"+ fch;
+            num_consecutivo = num_consecutivo.Replace("p.m.", "");
+                       
+
+            try
+            {               
+
+                //Ciudad destino
+                var cd = "";
+                //Ciudad destino
+
+                //tipo de conferencia
+                var tc = "";
+                //tipo de conferencia
+
+                //Inicio Recorrer ciudad destino
+                foreach (var item in ciudaddestino)
+                {
+                    cd += item + "|";
+                }
+                var CiudDestino = cd.Replace("´","");                
+                var ciudest = CiudDestino.Remove(CiudDestino.Length - 1);
+                //Fin recorrer ciudad destino
+                
+
+                //Recorrer tipo de conferencia
+                foreach (var item in tipoconferencia)
+                {
+                    tc += item + "|";
+                }
+                var tipoconfer = tc.Remove(tc.Length - 1);
+                //Recorrer tipo de conferencia
+
+
+                //horainicio
+
+
+                met.NuevoAgendamiento(codigo, num_consecutivo, tiposolicitud, met.devolverfechaformateada(fecharealizacion), met.devolverhoraformateada(horainicio), nombresolicitante, correosolicitante, celularsolicitante, clasevideoconferencia, tipoconfer, despachosolicitante, ciudadorigen.Replace("´",""), sala, ciudest, tipoaudiencia, contacdestin.Trim().ToUpper(), correodestin.Trim().ToUpper(), numeroproceso, mediorecepcion, "", fechaAgendamiento, usuario);
+                ViewBag.Mensaje = "ok";
+                return true;
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Mensaje = "no";
+                throw ex;
+            }
+        }
+        
+
+        public ActionResult DescargarLista()
+        {
+            try
+            {
+                ExportarExcel();
+                return RedirectToAction("Agenda");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public void ExportarExcel()
+        {
+            var lista = ae.t_formulario.ToList();
+
+            ExcelPackage pck = new ExcelPackage();
+            ExcelWorksheet ws = pck.Workbook.Worksheets.Add("Report");
+
+            ws.Cells["A1:Y1"].Style.Font.Bold = true;
+            Color colFromHex = System.Drawing.ColorTranslator.FromHtml("#9D9D9D");
+            ws.Cells["A1:Y1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            ws.Cells["A1:Y1"].Style.Fill.BackgroundColor.SetColor(colFromHex);
+
+            try
+            {
+                ws.Cells["A1"].Value = "CODIGO";
+                ws.Cells["B1"].Value = "CONSECUTIVO";
+                ws.Cells["C1"].Value = "TIPO DE SOLICITUD";
+                ws.Cells["D1"].Value = "FECHA DE REALIZACION";
+                ws.Cells["E1"].Value = "FECHA FINAL";
+                ws.Cells["F1"].Value = "HORA FINAL";
+                ws.Cells["G1"].Value = "HORA DE INICIO";
+                ws.Cells["H1"].Value = "NOMBRE SOLICITANTE";
+                ws.Cells["I1"].Value = "CORREO DEL SOLICITANTE";
+                ws.Cells["J1"].Value = "CELULAR DEL SOLICITANTE";
+                ws.Cells["K1"].Value = "CLASE DE VIDEOCONFERENCIA";
+                ws.Cells["L1"].Value = "TIPO CONFERENCIA";
+                ws.Cells["M1"].Value = "DESPACHO SOLICITANTE";
+                ws.Cells["N1"].Value = "CIUDAD ORIGEN";
+                ws.Cells["O1"].Value = "SALA";
+                ws.Cells["P1"].Value = "CIUDAD DESTINO";
+                ws.Cells["Q1"].Value = "TIPO DE AUDIENCIA";
+                ws.Cells["R1"].Value = "CONTACTO DESTINO";
+                ws.Cells["S1"].Value = "CORREO DESTINO";
+                ws.Cells["T1"].Value = "NUMERO DE PROCESO";
+                ws.Cells["U1"].Value = "MEDIO DE RECEPCION";
+                ws.Cells["V1"].Value = "ESTADO";
+                ws.Cells["W1"].Value = "USUARIO";
+                ws.Cells["X1"].Value = "DESCRIPCION";
+                ws.Cells["Y1"].Value = "FECHA DE AGENDAMIENTO";
+
+
+
+                int rowStart = 2;   
+
+                foreach (var item in lista)
+                {
+
+                    var numproce = "|" + item.NumeroDeProceso;
+                    var ciudorigin = "|" + item.CiudaDeOrigen;
+                    var ciudestino = "| " + item.CiudadDestino;
+                    var nombresala = "";
+
+                    if (item.Sala != "")
+                    {
+                         nombresala = (from db in ae.t_salas where db.CodigoSala == item.Sala select db.NombreCompletoSalaVirtual).First();
+                    }else
+                    {
+                        nombresala = "";
+                    }
+                    
+                    var nombreaudiencia = (from db in ae.t_tipo_audiencia where db.Abreviatura == item.TipoDeAudiencia select db.TipoAudiencia).First();
+                    var nombre_clase_videoconferencia = (from db in ae.t_clase_videoconferencia where db.Id == item.ClaseDeVideoconferencia select db.ClaseDeVideoConferencia).First();
+                    var nombre_despacho = (from db in ae.t_despacho where db.CODIGO_DESPACHO == item.DespachoSolicitante select db.NOMBRE).First();
+
+
+                    ws.Cells[string.Format("A{0}", rowStart)].Value = item.Codigo;
+                    ws.Cells[string.Format("B{0}", rowStart)].Value = item.Num_Consecutivo;
+                    ws.Cells[string.Format("C{0}", rowStart)].Value = item.TipoDeSolicitud;
+                    ws.Cells[string.Format("D{0}", rowStart)].Value = item.FechaRealizacion;
+                    ws.Cells[string.Format("E{0}", rowStart)].Value = item.fechafinal;
+                    ws.Cells[string.Format("F{0}", rowStart)].Value = item.horafinal;
+                    ws.Cells[string.Format("G{0}", rowStart)].Value = item.HoraDeInicio;
+                    ws.Cells[string.Format("H{0}", rowStart)].Value = item.NombreDeSolicitante;
+                    ws.Cells[string.Format("I{0}", rowStart)].Value = item.CorreoDeSolicitante;
+                    ws.Cells[string.Format("J{0}", rowStart)].Value = item.CelularDeSolicitante;
+                    ws.Cells[string.Format("K{0}", rowStart)].Value = nombre_clase_videoconferencia;
+                    ws.Cells[string.Format("L{0}", rowStart)].Value = item.TipoDeConferencia;
+                    ws.Cells[string.Format("M{0}", rowStart)].Value = nombre_despacho;
+                    ws.Cells[string.Format("N{0}", rowStart)].Value = ciudorigin;
+                    ws.Cells[string.Format("O{0}", rowStart)].Value = nombresala;
+                    ws.Cells[string.Format("P{0}", rowStart)].Value = ciudestino;
+                    ws.Cells[string.Format("Q{0}", rowStart)].Value = nombreaudiencia;
+                    ws.Cells[string.Format("R{0}", rowStart)].Value = item.ContactoDestino;
+                    ws.Cells[string.Format("S{0}", rowStart)].Value = item.CorreoDestino;
+                    ws.Cells[string.Format("T{0}", rowStart)].Value = numproce;
+                    ws.Cells[string.Format("U{0}", rowStart)].Value = item.MedioDeRecepcion;
+                    ws.Cells[string.Format("V{0}", rowStart)].Value = item.Estado;
+                    ws.Cells[string.Format("W{0}", rowStart)].Value = item.Usuario;
+                    ws.Cells[string.Format("X{0}", rowStart)].Value = item.Descripcion;
+                    ws.Cells[string.Format("Y{0}", rowStart)].Value = item.FechaDeRegistro;
+                    rowStart++;
+                }
+
+
+                DateTime fecha = DateTime.Now;
+                var fechaAgendamiento = Convert.ToString(fecha);
+
+                var fech = fechaAgendamiento.Replace("/", "_").Replace(":", "_").Replace(" ", "_").ToString();
+
+                ws.Cells["A:Y"].AutoFitColumns();
+                Response.Clear();
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment: filename=" + "Agendamiento" + fech + ".xlsx");
+                Response.BinaryWrite(pck.GetAsByteArray());
+                Response.End();
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }              
+
+        public JsonResult EscogerCiudad(string codigodespa)
+        {            
+            var recortado = codigodespa.Substring(0, 5);
+            ae.Configuration.ProxyCreationEnabled = false;
+            var lista = (from db in ae.t_despacho where db.CODIGO_DESPACHO == codigodespa select db).ToList();
+            return Json(lista, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public JsonResult EscogerSala(string codigodespa)
+        {
+            var cod_departamento = codigodespa.Substring(0, 2);
+            var cod_municipio = codigodespa.Substring(2,3);
+
+            ae.Configuration.ProxyCreationEnabled = false;
+            var municipio = (from db in ae.t_despacho where db.CODIGO_DESPACHO == codigodespa select db.MUNICIPIO).First();
+            if (municipio == "BOGOTÁ")
+            {
+                municipio = "BOGOTA D.C.";
+            }
+
+            //var lista = (from db in ae.t_salas where db.Municipio == municipio select db).ToList();          
+            var lista = (from db in ae.t_salas where db.CodigoDepartamento == cod_departamento && db.CodigoMunicipio == cod_municipio select db).ToList();
+
+            return Json(lista, JsonRequestBehavior.AllowGet);
+        }
+
+
+    }
+}

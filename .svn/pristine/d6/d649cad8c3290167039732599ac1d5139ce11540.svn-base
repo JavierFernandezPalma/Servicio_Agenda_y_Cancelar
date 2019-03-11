@@ -1,0 +1,135 @@
+﻿
+@{
+    ViewBag.Title = "Cambio De Clave";
+    var mensaje = ViewBag.Mensaje;
+}
+
+
+
+
+@if (ViewBag.Mensaje == null)
+{
+    <input type="hidden" id="txtOculto" value="" />
+}
+else
+{
+    <input type="hidden" id="txtOculto" value="@mensaje" />
+}
+
+
+<div class="container center section" id="idprogresbar" style="margin-top:200px;margin-bottom:400px;">
+    <div class="preloader-wrapper big active">
+        <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+                <div class="circle"></div>
+            </div><div class="gap-patch">
+                <div class="circle"></div>
+            </div><div class="circle-clipper right">
+                <div class="circle"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="hide" id="idpaginaclave">
+
+    <div class="row" style="margin-top:20px;">
+        <div class="col s12">
+            <div class="row card-panel z-depth-5">
+                <div class="col s12 center">
+                    <h5>CAMBIO DE CONTRASEÑA</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row" style="margin-top:20px;">
+        <div class="col s12">
+            @using (Html.BeginForm())
+            {
+                <div class="card-panel z-depth-5">
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix">art_track</i>
+                                    <input id="idclaveactual" name="clave_actual" type="password" class="validate" required>
+                                    <label for="idclaveactual">Contraseña Actual</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix">cached</i>
+                                    <input id="idclavenueva" type="password" name="nuevaclave" class="validate" required disabled>
+                                    <label for="idclavenueva">Nueva Contraseña</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <i class="material-icons prefix">cached</i>
+                                    <input id="idconfirmarclavenueva" type="password" class="validate" required disabled>
+                                    <label for="idconfirmarclavenueva">Confirma Contraseña</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>               
+                </div>
+
+                <div class="card-panel z-depth-5">
+                    <div class="row">
+                        <div class="col s12 m12 center">
+                            <button class="btn-large waves-effect waves-light z-depth-5" id="idbtncambiar" type="submit" name="btncambiarclave">
+                                CAMBIAR CONTRASEÑA
+                                <i class="material-icons right">send</i>
+                            </button>
+                        </div>                        
+                    </div>                    
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script>
+    window.addEventListener('load', () => {
+        document.getElementById('idprogresbar').className = 'hide';
+        document.getElementById('idpaginaclave').className = '';
+    });
+</script>
+
+<script>
+    // Inicio Evento para saber que despacho es a raiz del numero de consecutivo
+    $('#idclaveactual').change(function () {
+        var valor = $('#idclaveactual').val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ValidarClaveAnterior", "Acceso")',
+            data: JSON.stringify({ 'data': valor }),
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            async: true,
+            success: function (data) {                
+
+                if (data == 1) {
+                    $('#idclavenueva').removeAttr("disabled");
+                    $('#idconfirmarclavenueva').removeAttr("disabled");
+                }else
+                {
+                    M.toast({ html: 'SU CONTRASEÑA ACTUAL NO ES CORRECTA', classes: 'rounded' });
+                    $('#idclavenueva').prop("disabled", true);
+                    $('#idconfirmarclavenueva').prop("disabled", true);
+                }
+
+            },
+            error: function (errormessage) {
+                M.toast({ html: 'SE HA SUSCITADO UN ERROR', classes: 'rounded' });
+            }
+        });
+    });
+    // Fin Evento para saber que despacho es a raiz del numero de consecutivo
+
+    
+    
+
+</script>
+
+<script src="~/Scripts/cambioclave.js"></script>

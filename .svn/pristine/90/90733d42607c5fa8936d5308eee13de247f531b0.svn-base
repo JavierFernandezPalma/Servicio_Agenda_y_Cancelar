@@ -1,0 +1,222 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Linq;
+using System.ServiceProcess;
+using System.Text;
+using System.Threading.Tasks;
+using MODELO;
+using System.Timers;
+using System.Configuration;
+
+namespace SERVICIO
+{
+    public partial class Service1 : ServiceBase
+    {
+        agendaEntities bd_agenda = new agendaEntities();
+        Timer tmr = null;
+        //Robot pr = new Robot();
+        ClaseCancelarAgenda cancelarAgenda = new ClaseCancelarAgenda();
+        LogErrores log = new LogErrores();
+
+        public Service1()
+        {
+            InitializeComponent();
+
+        }
+
+        protected override void OnStart(string[] args)
+        {
+            try
+            {
+                log.EscribaLog("Onstart()", "Iniciando Servicio");
+                EventLog.WriteEntry("Iniciando Servicio Windows robot 2.");
+                tmr = new Timer();
+                tmr.Interval = 60000 * Convert.ToDouble(ConfigurationManager.AppSettings["intervalo_tiempo"]);
+                tmr.Elapsed += new ElapsedEventHandler(metodo_elapsed);
+                tmr.Enabled = true;
+                tmr.Start();
+                log.EscribaLog("Onstart()", "Primer recorrido inicial finalizado");
+            }
+            catch (Exception ex)
+            {
+                log.EscribaLog("Error_Onstart()", "El error es : " + ex.ToString());
+            }
+        }
+
+        protected override void OnStop()
+        {
+            log.EscribaLog("OnStop()", "Servicio detenido");
+            EventLog.WriteEntry("Finalizo el servicio Windows robot 2.");
+            this.tmr.Stop();
+            this.tmr = null;
+        }
+
+        private void metodo_elapsed(object sender, ElapsedEventArgs e)
+        {
+
+            try
+            {
+                tmr.Enabled = false;
+                tmr.Stop();
+                //ValidarFormulario();
+                VerificarCancelacion();
+                tmr.Enabled = true;
+                tmr.Start();
+                EventLog.WriteEntry("Servicio CancelarAgendaCSJ completo el ciclo correctamente.");
+                log.EscribaLog("CancelarAgendaCSJ", "Servicio CancelarAgendaCSJ completo el ciclo correctamente.");
+            }
+            catch (Exception ex)
+            {
+                log.EscribaLog("metodo_elapsed", "El error es : " + ex.ToString());
+            }
+        }
+
+        private void ValidarFormulario()
+        {
+            
+            try
+            {
+                log.EscribaLog("ValidarFormulario()", "Iniciando el metodo ValidarFormulario()");
+                List<t_formulario> registroCancelar = (from db in bd_agenda.t_formulario where (db.Estado == "CANCELADA" || db.Estado == "DUPLICADA") && db.EstadoAgendamiento == 2 select db).ToList();
+                bool control = false;
+
+                if (registroCancelar.Count != 0)
+                {
+                    foreach (var filaCancelar in registroCancelar)
+                    {
+                        control = CancelarAgenda(filaCancelar);
+
+                        bd_agenda.t_formulario.Attach(filaCancelar);
+
+                        if (!control)
+                        {
+                            filaCancelar.EstadoAgendamiento = 6;
+                        }
+                        else
+                        {
+                            filaCancelar.EstadoAgendamiento = 5;
+                        }
+
+                        bd_agenda.Configuration.ValidateOnSaveEnabled = false;
+                        bd_agenda.SaveChanges();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                log.EscribaLog("ValidarFormulario_Error", "El error es : " + ex.ToString());
+            }
+
+        }
+
+
+        public void VerificarCancelacion()
+        {
+            try
+            {
+                log.EscribaLog("VerificarCancelacion()", "Iniciando el metodo EjecutarProceso()");
+                List<t_formulario> registrosCancelacion = (from db in bd_agenda.t_formulario where db.EstadoAgendamiento == 9 select db).Take(100).ToList();
+                bool control = false;
+
+                if (registrosCancelacion.Count != 0)
+                {
+                    foreach (var filaCancelar in registrosCancelacion)
+                    {
+                        control = CancelarAgenda(filaCancelar);
+
+                        bd_agenda.t_formulario.Attach(filaCancelar);
+
+                        if (!control)
+                        {
+                            filaCancelar.EstadoAgendamiento = 10;
+                        }
+                        else
+                        {
+                            filaCancelar.EstadoAgendamiento = 5;
+                        }
+                        
+                        bd_agenda.Configuration.ValidateOnSaveEnabled = false;
+                        bd_agenda.SaveChanges();
+                    }
+ 
+                }
+
+            }
+            catch (Exception ex)
+            {
+                log.EscribaLog("VerificarCancelacion()_Error", "El error es : " + ex.ToString());
+            }
+        }
+
+        public bool CancelarAgenda(t_formulario idCancelar)
+        {
+            try
+            {
+                log.EscribaLog("CancelarAgenda()", "Iniciando el metodo EjecutarProceso()");
+                //List<t_formulario> registroFormulario = (from db in bd_agenda.t_formulario where db.Id == filaCancelar.Id select db).ToList();
+                var listaEliminar = (from db in bd_agenda.t_contador where db.IdFormulario == idCancelar.Id && db.EstadoAgendamiento == 2 select db).Take(100).ToList();
+                bool control = false;
+
+                if (listaEliminar.Count != 0)
+                {
+                    foreach (var registro in listaEliminar)
+                    {
+                        var credenciales = (from db in bd_agenda.t_login_rp1cloud where db.CodigoSala == registro.Sala select db).First();
+                        control = cancelarAgenda.ServicioCancelar(idCancelar, registro.CodigoFormulario, credenciales);
+
+                        bd_agenda.t_contador.Attach(registro);
+
+                        if (control == true)
+                        {
+                            registro.EstadoAgendamiento = 5;
+                            bd_agenda.Configuration.ValidateOnSaveEnabled = false;
+                            bd_agenda.SaveChanges();
+                            log.EscribaLog("CancelarAgenda()_Error", "Registro con error N° " + registro.Id);
+
+                            return true;
+                        }
+                        else
+                        {
+                            registro.EstadoAgendamiento = 6;
+                            bd_agenda.Configuration.ValidateOnSaveEnabled = false;
+                            bd_agenda.SaveChanges();
+                            log.EscribaLog("CancelarAgenda()", "Registro cancelado N° " + registro.Id);
+
+                            return false;
+                        }
+                        
+                    }
+
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                log.EscribaLog("CancelarAgenda()_Error", "El error es : " + ex.ToString());
+                return false;
+            }
+        }
+
+        public void OnStartTest()
+        {
+            try
+            {
+                tmr = new Timer();
+                tmr.Interval = 5000 * Convert.ToDouble(ConfigurationManager.AppSettings["intervalo_tiempo"]);
+                tmr.Elapsed += new ElapsedEventHandler(metodo_elapsed);
+                tmr.Enabled = true;
+                tmr.Start();
+            }
+            catch (Exception ex)
+            {
+                log.EscribaLog("OnStart()_Error", "El error es : " + ex.ToString());
+            }
+
+        }
+    }
+}
